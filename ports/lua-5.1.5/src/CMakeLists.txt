@@ -9,3 +9,13 @@ target_link_libraries(lua liblua)
 
 add_executable (luac ${SRC_LUAC})
 target_link_libraries(luac liblua)
+
+install(FILES lua.h DESTINATION include)
+install(FILES lualib.h DESTINATION include)
+install(FILES lauxlib.h DESTINATION include)
+install(FILES luaconf.h DESTINATION include)
+
+install(TARGETS liblua lua luac 
+        RUNTIME DESTINATION bin
+        LIBRARY DESTINATION lib
+        ARCHIVE DESTINATION lib/static)
