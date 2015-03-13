@@ -77,12 +77,12 @@ if __name__ == '__main__':
     import json
 
     def main():
-        if len(sys.argv) <= 1:
+        if len(sys.argv) <= 2:
             print("USAGE:")
-            print("\t{0} [package_dir_path]".format(sys.argv[0]))
+            print("\t{0} prepare [package_dir_path]".format(sys.argv[0]))
             return -1
           
-        package_dir_abs_path = os.path.realpath(sys.argv[1])
+        package_dir_abs_path = os.path.realpath(sys.argv[2])
         package_info_abs_path = os.path.join(package_dir_abs_path, 'info.json')
         package_info_dict = json.loads(open(package_info_abs_path).read())
         prepare_project(package_dir_abs_path, package_info_dict['REMOTE_ARCHIVE_URI'])
