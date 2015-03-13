@@ -8,8 +8,6 @@ Usage
 
     $ cd ports
     $ ./manage.py prepare $PACKAGE_DIR
-    $ cd ../sources/$PACKAGE_DIR
-    $ mkdir build
-    $ cd build
+    $ cd ../sources/$PACKAGE_DIR/build
     $ cmake ..
     $ make install
