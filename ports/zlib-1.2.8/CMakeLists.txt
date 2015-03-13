@@ -14,3 +14,11 @@ target_link_libraries(example z)
 
 add_executable(example64 test/example.c)
 target_link_libraries(example64 z)
+
+install(FILES zlib.h DESTINATION include)
+install(FILES zconf.h DESTINATION include)
+
+install(TARGETS z example example64 
+        RUNTIME DESTINATION bin
+        LIBRARY DESTINATION lib
+        ARCHIVE DESTINATION lib/static)
