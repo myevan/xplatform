@@ -73,14 +73,18 @@ PREBUILTS_DIR_ABS_PATH = os.path.normpath(os.path.join(MODULE_DIR_ABS_PATH, PREB
 
 if __name__ == '__main__':
     import sys
+    import json
 
     def main():
-        if len(sys.argv) < 1:
+        if len(sys.argv) <= 1:
             print("USAGE:")
-            print("\t{0} [archive_uri]".format(sys.argv[0]))
+            print("\t{0} [package_dir_path]".format(sys.argv[0]))
             return -1
-            
-        prepare_project(os.getcwd(), sys.argv[1])
+          
+        package_dir_abs_path = os.path.realpath(sys.argv[1])
+        package_info_abs_path = os.path.join(package_dir_abs_path, 'info.json')
+        package_info_dict = json.loads(open(package_info_abs_path).read())
+        prepare_project(package_dir_abs_path, package_info_dict['REMOTE_ARCHIVE_URI'])
         return 0
 
     sys.exit(main())
