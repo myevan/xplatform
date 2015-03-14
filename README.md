@@ -24,10 +24,13 @@ Build
     $ cd ports
     $ ./manage.py make $PACKAGE_DIR
 
-Intall
+Intall to prebuilts
 
     $ cd ../sources/$PACKAGE_DIR/build
     $ make install
+
+    $ cd ../prebuilts/$PACKAGE_DIR/
+    
 
 #### Xcode Usage
 

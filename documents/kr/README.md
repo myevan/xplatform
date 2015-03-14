@@ -32,6 +32,7 @@ CMake Ports
     $ cd ../sources/$PACKAGE_DIR/build
     $ make install
 
+    $ cd ../prebuilts/$PACKAGE_DIR/
 
 #### Xcode 사용법
 
