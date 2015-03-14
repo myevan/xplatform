@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
-project (libyaml-0.1.5)
+project (yaml-0.1.5)
 
 macro(macro_add_definition_if FOUND_VAR)
     if (${FOUND_VAR})
