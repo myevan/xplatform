@@ -42,7 +42,7 @@ def find_cmake_abs_path():
     else:
         return "cmake"
 
-def prepare_project(working_dir_abs_path, remote_archive_uri):
+def build_project(working_dir_abs_path, target_builder_name, remote_archive_uri):
     archive_file_name = os.path.split(urlparse(remote_archive_uri).path)[1]
     if archive_file_name.endswith('.gz'):
         archive_name = os.path.splitext(os.path.splitext(archive_file_name)[0])[0]
@@ -58,11 +58,21 @@ def prepare_project(working_dir_abs_path, remote_archive_uri):
     download_file(remote_archive_uri, local_archive_abs_path)
     extract_file(local_archive_abs_path, SOURCES_DIR_ABS_PATH)
     copy_files(working_dir_abs_path, source_dir_abs_path)
+
     prepare_directory(prebuilt_dir_abs_path)
     prepare_directory(build_dir_abs_path)
 
     os.chdir(build_dir_abs_path)
-    os.system('''"{0}" {1} -DCMAKE_INSTALL_PREFIX={2}'''.format(CMAKE_EXE_ABS_PATH, source_dir_abs_path, prebuilt_dir_abs_path))
+
+    if target_builder_name == 'clean':
+        shutil.rmtree(build_dir_abs_path)
+    elif target_builder_name == 'make':
+        os.system('''"{0}" {1} -DCMAKE_INSTALL_PREFIX={2}'''.format(CMAKE_EXE_ABS_PATH, source_dir_abs_path, prebuilt_dir_abs_path))
+        os.system('''make''')
+    elif target_builder_name == 'xcode':
+        os.system('''"{0}" -G Xcode {1} -DCMAKE_INSTALL_PREFIX={2}'''.format(CMAKE_EXE_ABS_PATH, source_dir_abs_path, prebuilt_dir_abs_path))
+    else:
+        print('NOT_SUPPORTED_BUILDER:{0}'.format(target_builder_name))
    
 
 SOURCES_DIR_REL_PATH = "../sources"
@@ -79,13 +89,13 @@ if __name__ == '__main__':
     def main():
         if len(sys.argv) <= 2:
             print("USAGE:")
-            print("\t{0} prepare [package_dir_path]".format(sys.argv[0]))
+            print("\t{0} [clean|make|xcode] [package_dir_path]".format(sys.argv[0]))
             return -1
           
         package_dir_abs_path = os.path.realpath(sys.argv[2])
         package_info_abs_path = os.path.join(package_dir_abs_path, 'info.json')
         package_info_dict = json.loads(open(package_info_abs_path).read())
-        prepare_project(package_dir_abs_path, package_info_dict['REMOTE_ARCHIVE_URI'])
+        build_project(package_dir_abs_path, sys.argv[1], package_info_dict['REMOTE_ARCHIVE_URI'])
         return 0
 
     sys.exit(main())
