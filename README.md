@@ -11,13 +11,13 @@ CMake Ports
 * cmake-2.8~
 * python-2.7~
 
-#### Compilers
+#### Builders
 
 * Windows: Visual Studio (msvc)
 * OS X: Xcode (clang)
 * Linux: GNU C/C++
 
-#### POSIX Build
+#### POSIX Usage
 
 Build 
 
@@ -29,7 +29,7 @@ Intall
     $ cd ../sources/$PACKAGE_DIR/build
     $ make install
 
-#### Xcode Build
+#### Xcode Usage
 
 Prepare
 
