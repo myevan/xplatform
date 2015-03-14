@@ -13,38 +13,43 @@ CMake Ports
 * python-2.7 이상
 
 
-#### 지원 컴파일러
+#### 지원 빌더
 
 * Windows: Visual Studio (msvc)
 * OS X: Xcode (clang)
 * Linux: GNU C/C++
 
 
-#### POSIX 빌드
-
-Makefile 생성
-
-    $ cd ports
-    $ ./manage.py prepare $PACKAGE_DIR
-    $ cd ../sources/$PACKAGE_DIR/build
-    $ cmake ..
+#### POSIX 사용법
 
 빌드 
 
-    $ make
+    $ cd ports
+    $ ./manage.py make $PACKAGE_DIR
 
 설치
 
+    $ cd ../sources/$PACKAGE_DIR/build
     $ make install
 
 
-#### Xcode 빌드
+#### Xcode 사용법
 
-Xcode 프로젝트 생성
+빌드
 
     $ cd ports
-    $ ./manage.py prepare $PACKAGE_DIR
+    $ ./manage.py xcode $PACKAGE_DIR
     $ cd ../sources/$PACKAGE_DIR/build
-    $ cmake -G Xcode ..
-    
+    $ xcodebuild
+
+설치
+
+    ...
+   
+ 
+#### 빌더 초기화
+
+    $ cd ports
+    $ ./manage.py clean $PACKAGE_DIR
+
 
