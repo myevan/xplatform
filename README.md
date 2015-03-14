@@ -19,19 +19,14 @@ CMake Ports
 
 #### POSIX Build
 
-Prepare
-
-    $ cd ports
-    $ ./manage.py prepare $PACKAGE_DIR
-    $ cd ../sources/$PACKAGE_DIR/build
-    $ cmake ..
-
 Build 
 
-    $ make
+    $ cd ports
+    $ ./manage.py make $PACKAGE_DIR
 
 Intall
 
+    $ cd ../sources/$PACKAGE_DIR/build
     $ make install
 
 #### Xcode Build
@@ -39,14 +34,13 @@ Intall
 Prepare
 
     $ cd ports
-    $ ./manage.py prepare $PACKAGE_DIR
-    $ cd ../sources/$PACKAGE_DIR/build
-    $ cmake -G Xcode ..
+    $ ./manage.py xcode $PACKAGE_DIR
 
 Build
 
-    ... 
+    $ cd ../sources/$PACKAGE_DIR/build
+    $ xcodebuild 
 
-Install 
+Install
 
     ...
