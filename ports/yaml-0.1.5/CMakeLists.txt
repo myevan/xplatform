@@ -42,12 +42,20 @@ include_directories (include)
 file (GLOB SRC src/*.c)
 add_library(yaml ${SRC})
 
-add_executable (test-reader tests/test-reader.c)
-target_link_libraries(test-reader yaml)
-
 install(FILES include/yaml.h DESTINATION include)
 
-install(TARGETS yaml test-reader 
+install(TARGETS yaml 
         RUNTIME DESTINATION bin
         LIBRARY DESTINATION lib
         ARCHIVE DESTINATION lib/static)
+
+if (TEST)
+    add_executable (test-reader tests/test-reader.c)
+    target_link_libraries(test-reader yaml)
+
+    install(TARGETS test-reader 
+            RUNTIME DESTINATION bin
+            LIBRARY DESTINATION lib
+            ARCHIVE DESTINATION lib/static)
+endif ()
+
