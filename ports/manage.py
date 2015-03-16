@@ -42,8 +42,10 @@ def find_cmake_abs_path():
     else:
         return "cmake"
 
-def build_project(working_dir_abs_path, target_builder_name, remote_archive_uri):
-    archive_file_name = os.path.split(urlparse(remote_archive_uri).path)[1]
+def build_project(working_dir_abs_path, target_builder_name, remote_archive_uri, archive_file_name=None):
+    if archive_file_name is None:
+        archive_file_name = os.path.split(urlparse(remote_archive_uri).path)[1]
+
     if archive_file_name.endswith('.gz'):
         archive_name = os.path.splitext(os.path.splitext(archive_file_name)[0])[0]
     else:
@@ -95,7 +97,7 @@ if __name__ == '__main__':
         package_dir_abs_path = os.path.realpath(sys.argv[2])
         package_info_abs_path = os.path.join(package_dir_abs_path, 'info.json')
         package_info_dict = json.loads(open(package_info_abs_path).read())
-        build_project(package_dir_abs_path, sys.argv[1], package_info_dict['REMOTE_ARCHIVE_URI'])
+        build_project(package_dir_abs_path, sys.argv[1], package_info_dict['REMOTE_ARCHIVE_URI'], package_info_dict.get('LOCAL_ARCHIVE_FILE_NAME', None))
         return 0
 
     sys.exit(main())
