@@ -72,7 +72,7 @@ def build_project(working_dir_abs_path, target_builder_name, remote_archive_uri,
 
     if target_builder_name == 'clean':
         shutil.rmtree(build_dir_abs_path)
-    elif target_builder_name == 'make':
+    elif target_builder_name == 'build':
         os.system('''"{0}" {1} -DCMAKE_INSTALL_PREFIX={2} {3}'''.format(
             CMAKE_EXE_ABS_PATH, source_dir_abs_path, prebuilt_dir_abs_path, ' '.join(options)))
         os.system('''make install''')
@@ -119,7 +119,7 @@ if __name__ == '__main__':
     def main():
         if len(sys.argv) <= 2:
             print("USAGE:")
-            print("\t{0} [clean|make|xcode] [package_dir_path]".format(sys.argv[0]))
+            print("\t{0} [clean|build|build_osx|build_ios] [package_dir_path]".format(sys.argv[0]))
             return -1
 
         options = sys.argv[3:]
