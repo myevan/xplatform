@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import os
+import wget
 import urllib
 import tarfile
 import shutil
@@ -17,8 +18,7 @@ def download_file(remote_file_uri, local_file_path):
     if os.access(local_file_path, os.R_OK):
         return
 
-    data = urllib.urlopen(remote_file_uri).read()
-    open(local_file_path, "wb").write(data)
+    wget.download(remote_file_uri, out=local_file_path)
 
 
 def extract_file(archive_file_path, target_dir_path):
