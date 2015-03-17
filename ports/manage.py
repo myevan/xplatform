@@ -23,7 +23,10 @@ def download_file(remote_file_uri, local_file_path):
 
 def extract_file(archive_file_path, target_dir_path):
     tar_file = tarfile.open(archive_file_path, 'r:gz')
-    tar_file.extractall(target_dir_path)
+    for member in tar_file.getmembers():
+        # ignore first directory for differnt archive_name and target_directory_name
+        member.name = '/'.join(member.name.split('/')[1:])
+        tar_file.extract(member, target_dir_path)
 
 
 def copy_files(source_dir_path, target_dir_path):
@@ -60,9 +63,9 @@ def build_project(working_dir_abs_path, target_builder_name, remote_archive_uri,
     prebuilt_dir_abs_path = os.path.join(PREBUILTS_DIR_ABS_PATH, archive_name)
     build_dir_abs_path = os.path.join(source_dir_abs_path, 'build')
 
-    prepare_directory(SOURCES_DIR_ABS_PATH)
+    prepare_directory(source_dir_abs_path)
     download_file(remote_archive_uri, local_archive_abs_path)
-    extract_file(local_archive_abs_path, SOURCES_DIR_ABS_PATH)
+    extract_file(local_archive_abs_path, source_dir_abs_path)
     copy_files(working_dir_abs_path, source_dir_abs_path)
 
     prepare_directory(prebuilt_dir_abs_path)
