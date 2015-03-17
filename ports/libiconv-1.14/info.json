@@ -1,0 +1,7 @@
+{
+    "REMOTE_ARCHIVE_URI": "http://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.14.tar.gz",
+    "REFERENCES":
+    [
+        "https://github.com/LuaDist/libiconv"
+    ]
+}
