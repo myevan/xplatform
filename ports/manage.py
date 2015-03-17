@@ -71,8 +71,29 @@ def build_project(working_dir_abs_path, target_builder_name, remote_archive_uri,
     elif target_builder_name == 'make':
         os.system('''"{0}" {1} -DCMAKE_INSTALL_PREFIX={2}'''.format(CMAKE_EXE_ABS_PATH, source_dir_abs_path, prebuilt_dir_abs_path))
         os.system('''make''')
-    elif target_builder_name == 'xcode':
+    elif target_builder_name == 'build_osx':
         os.system('''"{0}" -G Xcode {1} -DCMAKE_INSTALL_PREFIX={2}'''.format(CMAKE_EXE_ABS_PATH, source_dir_abs_path, prebuilt_dir_abs_path))
+        os.system('''xcodebuild''')
+    elif target_builder_name == 'build_ios':
+        os.system('''"{0}" -G Xcode {1} -DCMAKE_TOOLCHAIN_FILE=../../../toolchains/ios.cmake  -DCMAKE_INSTALL_PREFIX={2}'''.format(CMAKE_EXE_ABS_PATH, source_dir_abs_path, prebuilt_dir_abs_path))
+
+        os.system('''xcodebuild -configuration Debug''')
+        os.system('''xcodebuild -configuration Debug -sdk iphoneos''')
+        os.system('''xcodebuild -configuration Release''')
+        os.system('''xcodebuild -configuration Release -sdk iphoneos''')
+
+        if output_file_name.endswith('.a'):
+            output_head, output_tail = os.path.split(output_file_name)
+            debug_output_file_path = output_head + '_d' + output_tail
+            debug_dev_output_file_path = os.path.join(build_dir_abs_path, 'Debug-iphoneos', debug_output_file_name)
+            debug_sim_output_ile_path = os.path.join(build_dir_abs_path, 'Debug-iphonesimulator', debug_output_file_name)
+            release_output_file_path = output_head + '_d' + output_tail
+            release_dev_output_file_path = os.path.join(build_dir_abs_path, 'Debug-iphoneos', release_output_file_name)
+            release_sim_output_file_path = os.path.join(build_dir_abs_path, 'Debug-iphonesimulator', release_output_file_name)
+            os.system('''lipo -create -output {1} {1} {2}'''.format(
+                archive_name, debug_output_file_name, debug_dev_output_file_path, debug_sim_output_ile_path))
+            os.system('''lipo -create -output {1} {1} {2}'''.format(
+                archive_name, release_output_file_name, release_dev_output_file_path, release_sim_output_ile_path))
     else:
         print('NOT_SUPPORTED_BUILDER:{0}'.format(target_builder_name))
    
@@ -97,7 +118,12 @@ if __name__ == '__main__':
         package_dir_abs_path = os.path.realpath(sys.argv[2])
         package_info_abs_path = os.path.join(package_dir_abs_path, 'info.json')
         package_info_dict = json.loads(open(package_info_abs_path).read())
-        build_project(package_dir_abs_path, sys.argv[1], package_info_dict['REMOTE_ARCHIVE_URI'], package_info_dict.get('LOCAL_ARCHIVE_FILE_NAME', None))
+        build_project(
+                package_dir_abs_path, 
+                sys.argv[1], 
+                remote_archive_uri=package_info_dict['REMOTE_ARCHIVE_URI'], 
+                local_archive_abs_path=package_info_dict.get('LOCAL_ARCHIVE_FILE_NAME', None),
+                local_archive_abs_path=package_info_dict.get('OUTPUT_FILE_NAME', None))
         return 0
 
     sys.exit(main())
