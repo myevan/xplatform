@@ -17,33 +17,27 @@ CMake Ports
 * OS X: Xcode (clang)
 * Linux: GNU C/C++
 
-#### POSIX Usage
+#### How to Build 
 
-Build 
-
-    $ cd ports
-    $ ./manage.py make $PACKAGE_DIR
-
-Intall to prebuilts
-
-    $ cd ../sources/$PACKAGE_DIR/build
-    $ make install
-
-    $ cd ../prebuilts/$PACKAGE_DIR/
-    
-
-#### Xcode Usage
-
-Prepare
+POSIX
 
     $ cd ports
-    $ ./manage.py xcode $PACKAGE_DIR
+    $ ./manage.py build $PACKAGE_DIR
 
-Build
+OS X
 
-    $ cd ../sources/$PACKAGE_DIR/build
-    $ xcodebuild 
+    $ cd ports
+    $ ./manage.py build_osx $PACKAGE_DIR
 
-Install
+iOS (Universal: i386+armv7+armv7s+arm64)
 
-    ...
+    $ cd ports
+    $ ./manage.py build_ios $PACKAGE_DIR
+
+
+#### How to clean
+
+    $ cd ports
+    $ ./manage.py clean $PACKAGE_DIR
+
+

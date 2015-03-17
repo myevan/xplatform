@@ -20,35 +20,26 @@ CMake Ports
 * Linux: GNU C/C++
 
 
-#### POSIX 사용법
+#### 빌드 방법
 
-빌드 
-
-    $ cd ports
-    $ ./manage.py make $PACKAGE_DIR
-
-설치
-
-    $ cd ../sources/$PACKAGE_DIR/build
-    $ make install
-
-    $ cd ../prebuilts/$PACKAGE_DIR/
-
-#### Xcode 사용법
-
-빌드
+POSIX 
 
     $ cd ports
-    $ ./manage.py xcode $PACKAGE_DIR
-    $ cd ../sources/$PACKAGE_DIR/build
-    $ xcodebuild
+    $ ./manage.py build $PACKAGE_DIR
 
-설치
+OS X
 
-    ...
-   
- 
-#### 빌더 초기화
+    $ cd ports
+    $ ./manage.py build_osx $PACKAGE_DIR
+
+
+iOS (Universal: i386+armv7+armv7s+arm64)
+
+    $ cd ports
+    $ ./manage.py build_ios $PACKAGE_DIR
+
+
+#### 클린 방법
 
     $ cd ports
     $ ./manage.py clean $PACKAGE_DIR
