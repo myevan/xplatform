@@ -1,3 +1,4 @@
 prebuilts
 sources
 .idea
+*.pyc
