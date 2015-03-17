@@ -33,6 +33,10 @@ def copy_files(source_dir_path, target_dir_path):
             target_file_path = os.path.normpath(os.path.join(
                 target_dir_path, base_path[len(source_dir_path)+1:], file_name))
 
+            target_branch = os.path.split(target_file_path)[0]
+            if not os.access(target_branch, os.R_OK):
+                os.makedirs(target_branch)
+
             shutil.copyfile(source_file_path, target_file_path)
 
 
@@ -42,7 +46,7 @@ def find_cmake_abs_path():
     else:
         return "cmake"
 
-def build_project(working_dir_abs_path, target_builder_name, remote_archive_uri, archive_file_name=None):
+def build_project(working_dir_abs_path, target_builder_name, remote_archive_uri, archive_file_name=None, options=[]):
     if archive_file_name is None:
         archive_file_name = os.path.split(urlparse(remote_archive_uri).path)[1]
 
@@ -69,13 +73,16 @@ def build_project(working_dir_abs_path, target_builder_name, remote_archive_uri,
     if target_builder_name == 'clean':
         shutil.rmtree(build_dir_abs_path)
     elif target_builder_name == 'make':
-        os.system('''"{0}" {1} -DCMAKE_INSTALL_PREFIX={2}'''.format(CMAKE_EXE_ABS_PATH, source_dir_abs_path, prebuilt_dir_abs_path))
-        os.system('''make''')
+        os.system('''"{0}" {1} -DCMAKE_INSTALL_PREFIX={2} {3}'''.format(
+            CMAKE_EXE_ABS_PATH, source_dir_abs_path, prebuilt_dir_abs_path, ' '.join(options)))
+        os.system('''make install''')
     elif target_builder_name == 'build_osx':
-        os.system('''"{0}" -G Xcode {1} -DCMAKE_INSTALL_PREFIX={2}'''.format(CMAKE_EXE_ABS_PATH, source_dir_abs_path, prebuilt_dir_abs_path))
+        os.system('''"{0}" -G Xcode {1} -DCMAKE_INSTALL_PREFIX={2} {3}'''.format(
+            CMAKE_EXE_ABS_PATH, source_dir_abs_path, prebuilt_dir_abs_path, ' '.join(options)))
         os.system('''xcodebuild''')
     elif target_builder_name == 'build_ios':
-        os.system('''"{0}" -G Xcode {1} -DCMAKE_TOOLCHAIN_FILE=../../../toolchains/ios.cmake  -DCMAKE_INSTALL_PREFIX={2}'''.format(CMAKE_EXE_ABS_PATH, source_dir_abs_path, prebuilt_dir_abs_path))
+        os.system('''"{0}" -G Xcode {1} -DCMAKE_TOOLCHAIN_FILE=../../../toolchains/ios.cmake  -DCMAKE_INSTALL_PREFIX={2} {3}'''.format(
+            CMAKE_EXE_ABS_PATH, source_dir_abs_path, prebuilt_dir_abs_path, ' '.join(options)))
 
         os.system('''xcodebuild -configuration Debug''')
         os.system('''xcodebuild -configuration Debug -sdk iphoneos''')
@@ -114,16 +121,19 @@ if __name__ == '__main__':
             print("USAGE:")
             print("\t{0} [clean|make|xcode] [package_dir_path]".format(sys.argv[0]))
             return -1
-          
+
+        options = sys.argv[3:]
         package_dir_abs_path = os.path.realpath(sys.argv[2])
         package_info_abs_path = os.path.join(package_dir_abs_path, 'info.json')
         package_info_dict = json.loads(open(package_info_abs_path).read())
+
         build_project(
                 package_dir_abs_path, 
                 sys.argv[1], 
                 remote_archive_uri=package_info_dict['REMOTE_ARCHIVE_URI'], 
-                local_archive_abs_path=package_info_dict.get('LOCAL_ARCHIVE_FILE_NAME', None),
-                local_archive_abs_path=package_info_dict.get('OUTPUT_FILE_NAME', None))
+                archive_file_name=package_info_dict.get('LOCAL_ARCHIVE_FILE_NAME', None),
+                options=options)
+
         return 0
 
     sys.exit(main())
