@@ -18,10 +18,13 @@ def download_file(remote_file_uri, local_file_path):
     if os.access(local_file_path, os.R_OK):
         return
 
+    print('download\n\tremote_uri:{0}\n\tlocal_file:{1}'.format(remote_file_uri, local_file_path))
     wget.download(remote_file_uri, out=local_file_path)
-
+    print('')
 
 def extract_file(archive_file_path, target_dir_path):
+    print('extract\n\tarchive_file:{0}\n\ttarget_dir:{1}'.format(archive_file_path, target_dir_path))
+
     tar_file = tarfile.open(archive_file_path, 'r:gz')
     for member in tar_file.getmembers():
         # ignore first directory for differnt archive_name and target_directory_name
