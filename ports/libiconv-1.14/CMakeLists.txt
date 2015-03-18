@@ -34,7 +34,8 @@ if ( MINGW )
 endif ()
 
 include_directories ( ${CMAKE_CURRENT_SOURCE_DIR} include srclib )
-add_definitions ( -Dset_relocation_prefix=libcharset_set_relocation_prefix -Drelocate=libcharset_relocate -DHAVE_CONFIG_H -DINSTALLPREFIX=NULL -DNO_XMALLOC -DBUILDING_LIBCHARSET -DINSTALLDIR="" -DLIBDIR="" -DENABLE_RELOCATABLE=1 -DBUILDING_DLL -DIN_LIBRARY )
+add_definitions ( -Dset_relocation_prefix=libcharset_set_relocation_prefix -Drelocate=libcharset_relocate -DHAVE_CONFIG_H -DINSTALLPREFIX=NULL -DNO_XMALLOC -DBUILDING_LIBCHARSET -DINSTALLDIR="" -DLIBDIR="" -DENABLE_RELOCATABLE=1 -DIN_LIBRARY )
+# FOR_BUILD_SHARED_LIBS: add_definitions ( -DBUILDING_DLL )
 
 # libcharset
 set ( SRC_LIBCHARSET
@@ -65,25 +66,27 @@ set ( SRC_LIBICRT
   srclib/strerror.c
   srclib/strerror-override.c  
 )
-add_library ( icrt STATIC ${SRC_LIBICRT} )
 
 # libiconv
 set ( SRC_LIBICONV
   lib/iconv.c
 )
 
-add_library ( iconv ${SRC_LIBICONV} )
+add_library ( iconv STATIC ${SRC_LIBICONV} )
 target_link_libraries ( iconv charset )
-set_target_properties ( iconv PROPERTIES COMPILE_FLAGS -DBUILDING_LIBICONV)
-
-add_executable ( iconvcli src/iconv_no_i18n.c )
-target_link_libraries ( iconvcli iconv icrt charset )
-set_target_properties ( iconvcli PROPERTIES OUTPUT_NAME iconv )
+# FOR_BUILD_SHARED_LIBS set_target_properties ( iconv PROPERTIES COMPILE_FLAGS -DBUILDING_LIBICONV)
 
 install_header ( include/iconv.h )
 install_data ( README AUTHORS COPYING )
 
-install(TARGETS iconv charset iconvcli 
+install(TARGETS iconv charset
         RUNTIME DESTINATION bin
         LIBRARY DESTINATION lib
         ARCHIVE DESTINATION lib/static)
+
+# for iconvcli
+# add_library ( icrt STATIC ${SRC_LIBICRT} )
+# add_executable ( iconvcli src/iconv_no_i18n.c )
+# target_link_libraries ( iconvcli iconv icrt charset )
+# set_target_properties ( iconvcli PROPERTIES OUTPUT_NAME iconv )
+# install(TARGETS iconvcli RUNTIME DESTINATION bin))))
