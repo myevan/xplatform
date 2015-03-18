@@ -120,7 +120,8 @@ def build_project(port_dir_abs_path, port_info_dict, command_name, command_optio
 
         os.system('''"{0}" -G Xcode {1} -DCMAKE_INSTALL_PREFIX={2} {3}'''.format(
             CMAKE_EXE_ABS_PATH, source_dir_abs_path, platform_dir_abs_path, ' '.join(command_options)))
-        os.system('''xcodebuild''')
+        os.system('''xcodebuild -configuration Debug -target install''')
+        os.system('''xcodebuild -configuration Release -target install''')
     elif command_name == 'build_ios':
         platform_dir_abs_path = prepare_platform_directory('ios', project_name)
 
