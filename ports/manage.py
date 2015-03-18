@@ -64,7 +64,7 @@ def build_project(working_dir_abs_path, target_builder_name, remote_archive_uri,
     local_archive_abs_path = os.path.join(SOURCES_DIR_ABS_PATH, archive_file_name)
     source_dir_abs_path = os.path.join(SOURCES_DIR_ABS_PATH, archive_name)
     prebuilt_dir_abs_path = os.path.join(PREBUILTS_DIR_ABS_PATH, archive_name)
-    build_dir_abs_path = os.path.join(source_dir_abs_path, 'build')
+    build_dir_abs_path = os.path.join(source_dir_abs_path, '__build')
 
     prepare_directory(source_dir_abs_path)
     download_file(remote_archive_uri, local_archive_abs_path)
@@ -82,6 +82,15 @@ def build_project(working_dir_abs_path, target_builder_name, remote_archive_uri,
         os.system('''"{0}" {1} -DCMAKE_INSTALL_PREFIX={2} {3}'''.format(
             CMAKE_EXE_ABS_PATH, source_dir_abs_path, prebuilt_dir_abs_path, ' '.join(options)))
         os.system('''make install''')
+    elif target_builder_name == 'build_win':
+        import subprocess
+        args = [
+            CMAKE_EXE_ABS_PATH,
+            '-G', 'Visual Studio 12 2013',
+            source_dir_abs_path,
+            '-DCMAKE_INSTALL_PREFIX={0}'.format(prebuilt_dir_abs_path)]
+        args += options
+        subprocess.call(args)
     elif target_builder_name == 'build_osx':
         os.system('''"{0}" -G Xcode {1} -DCMAKE_INSTALL_PREFIX={2} {3}'''.format(
             CMAKE_EXE_ABS_PATH, source_dir_abs_path, prebuilt_dir_abs_path, ' '.join(options)))
