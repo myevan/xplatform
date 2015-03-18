@@ -1,0 +1,8 @@
+{
+    "REMOTE_ARCHIVE_URI": "https://downloads.sourceforge.net/project/openil/DevIL/1.7.8/DevIL-1.7.8.tar.gz",
+    "LOCAL_ARCHIVE_FILE_NAME": "devil-1.7.8.tar.gz",
+    "REFERENCES":
+    [
+        "https://github.com/kphillisjr/DevIL/blob/master/CMakeLists.txt"
+    ]
+}
