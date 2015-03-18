@@ -1,20 +1,24 @@
-cmake_minimum_required(VERSION 2.8)
-project (libiconv-1.14)
-
 # Copyright (C) 2007-2012 LuaDist.
 # Created by Peter Drahoš
 # Redistribution and use of this file is allowed according to the terms of the MIT license.
 # For details see the COPYRIGHT file distributed with LuaDist.
 # Please note that the package source code is licensed under its own license.
 
+cmake_minimum_required(VERSION 2.8)
+
+project (libiconv-1.14)
+
+# to distinguish between debug and release lib
+set(CMAKE_DEBUG_POSTFIX "_d")
+
 include ( cmake/dist.cmake )
 include ( cmake/configure.cmake )
 
 # Options
 option ( ENABLE_EXTRA "Enable a few rarely used encodings" OFF)
-option ( ENABLE_NLS "Translation of program messages to the user's native
-   language is requested" OFF)
+option ( ENABLE_NLS "Translation of program messages to the user's native language is requested" OFF)
 #option ( ENABLE_RELOCATABLE "The package shall run at any location in the file system" ON )
+
 
 # iconv.h
 set ( USE_MBSTATE_T 1 )
@@ -31,6 +35,21 @@ configure_file ( srclib/unitypes.in.h ${CMAKE_CURRENT_SOURCE_DIR}/srclib/unitype
 if ( MINGW )
   add_definitions ( -DELOOP=0 -DHAVE_DECL_STRERROR_R=0 )
   configure_file ( srclib/alloca.in.h ${CMAKE_CURRENT_SOURCE_DIR}/srclib/alloca.h )
+endif ()
+
+# Force MT for MSVC
+if ( MSVC )
+	set( CompilerFlags
+        CMAKE_CXX_FLAGS
+        CMAKE_CXX_FLAGS_DEBUG
+        CMAKE_CXX_FLAGS_RELEASE
+        CMAKE_C_FLAGS
+        CMAKE_C_FLAGS_DEBUG
+        CMAKE_C_FLAGS_RELEASE)
+
+	foreach(CompilerFlag ${CompilerFlags})
+	  string(REPLACE "/MD" "/MT" ${CompilerFlag} "${${CompilerFlag}}")
+	endforeach()
 endif ()
 
 include_directories ( ${CMAKE_CURRENT_SOURCE_DIR} include srclib )
