@@ -2,9 +2,9 @@
 import os
 import tarfile
 import shutil
+import subprocess
 
 from scripts import wget
-
 from urlparse import urlparse
 
 
@@ -56,6 +56,10 @@ def find_cmake_abs_path():
         return "cmake"
 
 
+def find_visual_studio_devev():
+    return "c:/Program Files (x86)/Microsoft Visual Studio 12.0/Common7/IDE/devenv.exe"
+
+
 def build_project(port_dir_abs_path, port_info_dict, command_name, command_options=[]):
     remote_archive_uri = port_info_dict['REMOTE_ARCHIVE_URI']
     archive_file_name = port_info_dict.get('LOCAL_ARCHIVE_FILE_NAME', os.path.split(urlparse(remote_archive_uri).path)[1])
@@ -64,6 +68,8 @@ def build_project(port_dir_abs_path, port_info_dict, command_name, command_optio
         archive_name = os.path.splitext(os.path.splitext(archive_file_name)[0])[0]
     else:
         archive_name = os.path.splitext(archive_file_name)[0]
+
+    project_name = archive_name
 
     archive_file_abs_path = os.path.join(ARCHIVES_DIR_ABS_PATH, archive_file_name)
     source_dir_abs_path = os.path.join(SOURCES_DIR_ABS_PATH, archive_name)
@@ -89,14 +95,19 @@ def build_project(port_dir_abs_path, port_info_dict, command_name, command_optio
             CMAKE_EXE_ABS_PATH, source_dir_abs_path, prebuilt_dir_abs_path, ' '.join(command_options)))
         os.system('''make install''')
     elif command_name == 'build_win':
-        import subprocess
-        args = [
-            CMAKE_EXE_ABS_PATH,
-            '-G', 'Visual Studio 12 2013',
-            source_dir_abs_path,
-            '-DCMAKE_INSTALL_PREFIX={0}'.format(prebuilt_dir_abs_path)]
-        args += command_options
-        subprocess.call(args)
+        subprocess.call([
+           CMAKE_EXE_ABS_PATH,
+           '-G', 'Visual Studio 12 2013',
+           source_dir_abs_path,
+           '-DCMAKE_INSTALL_PREFIX={0}'.format(prebuilt_dir_abs_path)] + command_options)
+
+        vs_devenv_abs_path = find_visual_studio_devev()
+        vs_solution_abs_path = os.path.join(build_dir_abs_path, project_name + ".sln")
+        subprocess.call([vs_devenv_abs_path, vs_solution_abs_path, '/build', 'Debug', '/project', 'ALL_BUILD'])
+        subprocess.call([vs_devenv_abs_path, vs_solution_abs_path, '/build', 'Release', '/project', 'ALL_BUILD'])
+        subprocess.call([vs_devenv_abs_path, vs_solution_abs_path, '/build', 'Debug', '/project', 'INSTALL'])
+        subprocess.call([vs_devenv_abs_path, vs_solution_abs_path, '/build', 'Release', '/project', 'INSTALL'])
+
     elif command_name == 'build_osx':
         os.system('''"{0}" -G Xcode {1} -DCMAKE_INSTALL_PREFIX={2} {3}'''.format(
             CMAKE_EXE_ABS_PATH, source_dir_abs_path, prebuilt_dir_abs_path, ' '.join(command_options)))
