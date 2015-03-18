@@ -1,0 +1,7 @@
+{
+    "REMOTE_ARCHIVE_URI": "http://downloads.xiph.org/releases/vorbis/libvorbis-1.3.5.tar.gz",
+    "REFERENCES": 
+    [
+        "https://github.com/ivansafrin/Polycode/blob/master/CMake/libvorbis.cmake"
+    ]
+}
