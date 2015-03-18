@@ -60,6 +60,12 @@ def find_visual_studio_devev():
     return "c:/Program Files (x86)/Microsoft Visual Studio 12.0/Common7/IDE/devenv.exe"
 
 
+def prepare_platform_directory(platform_name, project_name):
+    platform_dir_abs_path = os.path.join(PLATFORMS_DIR_ABS_PATH, platform_name, project_name)
+    prepare_directory(platform_dir_abs_path)
+    return platform_dir_abs_path
+
+
 def build_project(port_dir_abs_path, port_info_dict, command_name, command_options=[]):
     remote_archive_uri = port_info_dict['REMOTE_ARCHIVE_URI']
     archive_file_name = port_info_dict.get('LOCAL_ARCHIVE_FILE_NAME', os.path.split(urlparse(remote_archive_uri).path)[1])
@@ -73,7 +79,6 @@ def build_project(port_dir_abs_path, port_info_dict, command_name, command_optio
 
     archive_file_abs_path = os.path.join(ARCHIVES_DIR_ABS_PATH, archive_file_name)
     source_dir_abs_path = os.path.join(SOURCES_DIR_ABS_PATH, archive_name)
-    prebuilt_dir_abs_path = os.path.join(PREBUILTS_DIR_ABS_PATH, archive_name)
     build_dir_abs_path = os.path.join(source_dir_abs_path, '__build')
 
     prepare_directory(ARCHIVES_DIR_ABS_PATH)
@@ -83,23 +88,25 @@ def build_project(port_dir_abs_path, port_info_dict, command_name, command_optio
     extract_file(archive_file_abs_path, source_dir_abs_path)
     copy_files(port_dir_abs_path, source_dir_abs_path)
 
-    prepare_directory(prebuilt_dir_abs_path)
     prepare_directory(build_dir_abs_path)
-
     os.chdir(build_dir_abs_path)
 
     if command_name == 'clean':
         shutil.rmtree(build_dir_abs_path)
     elif command_name == 'build':
+        platform_dir_abs_path = prepare_platform_directory('posix', project_name)
+
         os.system('''"{0}" {1} -DCMAKE_INSTALL_PREFIX={2} {3}'''.format(
-            CMAKE_EXE_ABS_PATH, source_dir_abs_path, prebuilt_dir_abs_path, ' '.join(command_options)))
+            CMAKE_EXE_ABS_PATH, source_dir_abs_path, platform_dir_abs_path, ' '.join(command_options)))
         os.system('''make install''')
     elif command_name == 'build_win':
+        platform_dir_abs_path = prepare_platform_directory('win/VS2013', project_name)
+
         subprocess.call([
            CMAKE_EXE_ABS_PATH,
            '-G', 'Visual Studio 12 2013',
            source_dir_abs_path,
-           '-DCMAKE_INSTALL_PREFIX={0}'.format(prebuilt_dir_abs_path)] + command_options)
+           '-DCMAKE_INSTALL_PREFIX={0}'.format(platform_dir_abs_path)] + command_options)
 
         vs_devenv_abs_path = find_visual_studio_devev()
         vs_solution_abs_path = os.path.join(build_dir_abs_path, project_name + ".sln")
@@ -109,12 +116,16 @@ def build_project(port_dir_abs_path, port_info_dict, command_name, command_optio
         subprocess.call([vs_devenv_abs_path, vs_solution_abs_path, '/build', 'Release', '/project', 'INSTALL'])
 
     elif command_name == 'build_osx':
+        platform_dir_abs_path = prepare_platform_directory('osx', project_name)
+
         os.system('''"{0}" -G Xcode {1} -DCMAKE_INSTALL_PREFIX={2} {3}'''.format(
-            CMAKE_EXE_ABS_PATH, source_dir_abs_path, prebuilt_dir_abs_path, ' '.join(command_options)))
+            CMAKE_EXE_ABS_PATH, source_dir_abs_path, platform_dir_abs_path, ' '.join(command_options)))
         os.system('''xcodebuild''')
     elif command_name == 'build_ios':
+        platform_dir_abs_path = prepare_platform_directory('ios', project_name)
+
         os.system('''"{0}" -G Xcode {1} -DCMAKE_TOOLCHAIN_FILE=../../../toolchains/ios.cmake  -DCMAKE_INSTALL_PREFIX={2} {3}'''.format(
-            CMAKE_EXE_ABS_PATH, source_dir_abs_path, prebuilt_dir_abs_path, ' '.join(command_options)))
+            CMAKE_EXE_ABS_PATH, source_dir_abs_path, platform_dir_abs_path, ' '.join(command_options)))
 
         os.system('''xcodebuild -configuration Debug''')
         os.system('''xcodebuild -configuration Debug -sdk iphoneos''')
@@ -136,17 +147,17 @@ def build_project(port_dir_abs_path, port_info_dict, command_name, command_optio
             os.system('''lipo -create -output {1} {1} {2}'''.format(
                 archive_name, release_output_file_path, release_dev_output_file_path, release_sim_output_file_path))
     else:
-        print('NOT_SUPPORTED_BUILDER:{0}'.format(command_name))
+        print('NOT_SUPPORTED_COMMAND:{0}'.format(command_name))
 
 
 ARCHIVES_DIR_REL_PATH = "./archives"
 SOURCES_DIR_REL_PATH = "./sources"
-PREBUILTS_DIR_REL_PATH = "./prebuilts"
+PLATFORMS_DIR_REL_PATH = "./platforms"
 CMAKE_EXE_ABS_PATH = find_cmake_abs_path()
 MODULE_DIR_ABS_PATH = os.path.dirname(os.path.realpath(__file__))
 ARCHIVES_DIR_ABS_PATH = os.path.normpath(os.path.join(MODULE_DIR_ABS_PATH, ARCHIVES_DIR_REL_PATH))
 SOURCES_DIR_ABS_PATH = os.path.normpath(os.path.join(MODULE_DIR_ABS_PATH, SOURCES_DIR_REL_PATH))
-PREBUILTS_DIR_ABS_PATH = os.path.normpath(os.path.join(MODULE_DIR_ABS_PATH, PREBUILTS_DIR_REL_PATH))
+PLATFORMS_DIR_ABS_PATH = os.path.normpath(os.path.join(MODULE_DIR_ABS_PATH, PLATFORMS_DIR_REL_PATH))
 
 if __name__ == '__main__':
     import sys
