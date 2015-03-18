@@ -88,7 +88,7 @@
 
 /* Define to 1 if you have <alloca.h> and it should be used (not on Ultrix).
    */
-#cmakedefine HAVE_ALLOCA_H 1
+#cmakedefine HAVE_ALLOCA_H @HAVE_ALLOCA_H@
 
 /* Define to 1 if you have the `canonicalize_file_name' function. */
 #cmakedefine HAVE_CANONICALIZE_FILE_NAME 1
@@ -649,7 +649,7 @@
 #cmakedefine HAVE_TSEARCH 1
 
 /* Define to 1 if you have the <unistd.h> header file. */
-#cmakedefine HAVE_UNISTD_H 1
+#cmakedefine HAVE_UNISTD_H @HAVE_UNISTD_H@
 
 /* Define to 1 if the system has the type `unsigned long long int'. */
 #cmakedefine HAVE_UNSIGNED_LONG_LONG_INT 1
