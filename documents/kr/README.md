@@ -24,24 +24,24 @@ CMake Ports
 
 POSIX 
 
-    $ cd ports
-    $ ./manage.py build $PACKAGE_DIR
+    $ ./manage.py build $PORT_NAME
 
 OS X
 
-    $ cd ports
-    $ ./manage.py build_osx $PACKAGE_DIR
-
+    $ ./manage.py build_osx $PORT_NAME
 
 iOS (Universal: i386+armv7+armv7s+arm64)
 
-    $ cd ports
-    $ ./manage.py build_ios $PACKAGE_DIR
+    $ ./manage.py build_ios $PORT_NAME
+
+Windows
+
+    $ ./manage.py build_win $PORT_NAME
 
 
 #### 클린 방법
 
     $ cd ports
-    $ ./manage.py clean $PACKAGE_DIR
+    $ ./manage.py clean $PORT_NAME
 
 
