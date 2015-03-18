@@ -81,6 +81,13 @@ def build_project(port_dir_abs_path, port_info_dict, command_name, command_optio
     source_dir_abs_path = os.path.join(SOURCES_DIR_ABS_PATH, archive_name)
     build_dir_abs_path = os.path.join(source_dir_abs_path, '__build')
 
+    prepare_directory(build_dir_abs_path)
+    os.chdir(build_dir_abs_path)
+
+    if command_name == 'clean':
+        shutil.rmtree(build_dir_abs_path)
+        return
+
     prepare_directory(ARCHIVES_DIR_ABS_PATH)
     download_file(remote_archive_uri, archive_file_abs_path)
 
@@ -88,12 +95,7 @@ def build_project(port_dir_abs_path, port_info_dict, command_name, command_optio
     extract_file(archive_file_abs_path, source_dir_abs_path)
     copy_files(port_dir_abs_path, source_dir_abs_path)
 
-    prepare_directory(build_dir_abs_path)
-    os.chdir(build_dir_abs_path)
-
-    if command_name == 'clean':
-        shutil.rmtree(build_dir_abs_path)
-    elif command_name == 'build':
+    if command_name == 'build':
         platform_dir_abs_path = prepare_platform_directory('posix', project_name)
 
         os.system('''"{0}" {1} -DCMAKE_INSTALL_PREFIX={2} {3}'''.format(
