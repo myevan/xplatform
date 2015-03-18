@@ -62,7 +62,7 @@ set ( SRC_LIBCHARSET
   libcharset/lib/relocatable.c
 )
 
-add_library ( charset ${SRC_LIBCHARSET} )
+add_library ( charset STATIC ${SRC_LIBCHARSET} )
 set_target_properties ( charset PROPERTIES COMPILE_FLAGS -DBUILDING_LIBCHARSET)
 
 # libicrt
