@@ -1,4 +1,3 @@
-# CMakeLists.txt to build static libvorbis and libvorbisfile for Polycode
 cmake_minimum_required(VERSION 2.8)
 
 project(libvorbis-1.3.5)
@@ -18,22 +17,6 @@ set(CMAKE_DEBUG_POSTFIX "_d")
 
 include_directories("${PROJECT_SOURCE_DIR}/../libogg-1.3.2/include")
 link_directories("${PROJECT_SOURCE_DIR}/../libogg-1.3.2")
-
-# to link libogg on system
-
-#find_path(OGG_INCLUDE_DIR NAMES ogg/ogg.h)
-#find_library(OGG_RELEASE_LIBRARY NAMES libogg)
-#find_library(OGG_DEBUG_LIBRARY NAMES libogg_d)
-
-#if(OGG_DEBUG_LIBRARY)
-#    list(APPEND OGG_LIBRARY debug ${OGG_DEBUG_LIBRARY})
-#endif(OGG_DEBUG_LIBRARY)
-
-#if(OGG_RELEASE_LIBRARY)
-#    list(APPEND OGG_LIBRARY optimized ${OGG_RELEASE_LIBRARY})
-#endif(OGG_RELEASE_LIBRARY)
-
-#message("OGG_LIBRARY=${OGG_LIBRARY}")
 
 message("CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}")
 
@@ -115,7 +98,7 @@ include_directories("${PROJECT_SOURCE_DIR}/lib")
 add_definitions(-DHAVE_CONFIG_H -DUSE_MEMORY_H)
 add_definitions(-DFLOAT_LOOKUP)
 
-# APPLE -DDARWIN -fno-common -force_cpusubtype_ALL -Wall -g -O3 -ffast-math -fsigned-char -Wdeclaration-after-statement  -DUSE_MEMORY_H 
+# TODO: APPLE -DDARWIN -fno-common -force_cpusubtype_ALL -Wall -g -O3 -ffast-math -fsigned-char -Wdeclaration-after-statement 
 
 if(MSVC)
     add_definitions(/D_UNICODE /DUNICODE)
