@@ -1,0 +1,8 @@
+{
+    "REMOTE_ARCHIVE_URI": "https://downloads.sourceforge.net/project/glew/glew/1.12.0/glew-1.12.0.tgz",
+    "LOCAL_ARCHIVE_FILE_NAME": "glew-1.12.0.tar.gz",
+    "REFERENCES":
+    [
+        "https://github.com/Perlmint/glew-cmake"
+    ]
+}

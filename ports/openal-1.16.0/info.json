@@ -1,0 +1,9 @@
+{
+
+    "REMOTE_ARCHIVE_URI": "https://github.com/kcat/openal-soft/archive/openal-soft-1.16.0.tar.gz",
+    "LOCAL_ARCHIVE_FILE_NAME": "openal-1.16.0.tar.gz",
+    "REFERENCES":
+    [
+        "https://github.com/ivansafrin/Polycode/blob/master/CMake/openal.cmake"
+    ]
+}
