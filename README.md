@@ -11,12 +11,6 @@ CMake Ports
 * cmake-2.8~
 * python-2.7~
 
-#### Builders
-
-* Windows: Visual Studio (msvc)
-* OS X: Xcode (clang)
-* Linux: GNU C/C++
-
 #### How to Build 
 
 POSIX
@@ -32,9 +26,13 @@ iOS (Universal: i386+armv7+armv7s+arm64)
     $ cd ports
     $ ./manage.py build_ios ports/$PORT_NAME
 
+Android
+
+    $ ./manage.py build_and ports/$PORT_NAME
+
 Windows
 
-    $ ./manage.py build_win ports/$PORT_NAME
+    $ python manage.py build_win ports/$PORT_NAME
 
 #### How to clean
 

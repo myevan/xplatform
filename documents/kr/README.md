@@ -34,9 +34,13 @@ iOS (Universal: i386+armv7+armv7s+arm64)
 
     $ ./manage.py build_ios $PORT_NAME
 
+Android
+
+    $ ./manage.py build_and $PORT_NAME
+
 Windows
 
-    $ ./manage.py build_win $PORT_NAME
+    $ python manage.py build_win $PORT_NAME
 
 
 #### 클린 방법
