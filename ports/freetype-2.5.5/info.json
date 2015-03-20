@@ -1,0 +1,7 @@
+{
+    "REMOTE_ARCHIVE_URI": "https://downloads.sf.net/project/freetype/freetype2/2.5.5/freetype-2.5.5.tar.gz",
+    "REFERENCES":
+    [
+        "https://github.com/bjornblissing/osg-3rdparty-cmake/tree/master/freetype"
+    ]
+}
