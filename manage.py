@@ -149,6 +149,18 @@ def build_project(port_dir_abs_path, port_info_dict, command_name, command_optio
                 archive_name, debug_output_file_path, debug_dev_output_file_path, debug_sim_output_ile_path))
             os.system('''lipo -create -output {1} {1} {2}'''.format(
                 archive_name, release_output_file_path, release_dev_output_file_path, release_sim_output_file_path))
+    elif command_name == 'build_and':
+        platform_dir_abs_path = prepare_platform_directory('and', project_name)
+
+        subprocess.call([
+           CMAKE_EXE_ABS_PATH,
+           source_dir_abs_path,
+           '-DCMAKE_TOOLCHAIN_FILE=../../../toolchains/android.cmake', 
+           '-DANDROID_NDK={0}'.format(os.environ['NDK_ROOT']), 
+           '-DCMAKE_BUILD_TYPE=Release', 
+           '-DANDROID_ABI=armeabi-v7a with NEON', 
+           '-DCMAKE_INSTALL_PREFIX={0}'.format(platform_dir_abs_path)] + command_options)
+        subprocess.call(['make', 'install'])
     else:
         print('NOT_SUPPORTED_COMMAND:{0}'.format(command_name))
 
