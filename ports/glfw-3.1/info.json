@@ -1,0 +1,4 @@
+{
+    "REMOTE_ARCHIVE_URI": "https://github.com/glfw/glfw/archive/3.1.tar.gz",
+    "LOCAL_ARCHIVE_FILE_NAME": "glfw-1.12.0.tar.gz"
+}
