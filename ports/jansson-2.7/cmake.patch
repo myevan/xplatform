@@ -1,0 +1,12 @@
+diff -ubr archives/jansson-2.7/CMakeLists.txt sources/jansson-2.7/CMakeLists.txt
+--- archives/jansson-2.7/CMakeLists.txt	2014-10-02 15:05:36.000000000 +0900
++++ sources/jansson-2.7/CMakeLists.txt	2015-03-27 01:40:42.000000000 +0900
+@@ -635,7 +635,7 @@
+ install(TARGETS jansson
+         EXPORT JanssonTargets
+         LIBRARY DESTINATION "${JANSSON_INSTALL_LIB_DIR}" COMPONENT lib
+-        ARCHIVE DESTINATION "${JANSSON_INSTALL_LIB_DIR}" COMPONENT lib
++        ARCHIVE DESTINATION "${JANSSON_INSTALL_LIB_DIR}/static" COMPONENT lib
+         RUNTIME DESTINATION "${JANSSON_INSTALL_BIN_DIR}" COMPONENT lib # Windows DLLs
+         PUBLIC_HEADER DESTINATION "${JANSSON_INSTALL_INCLUDE_DIR}" COMPONENT dev)
+
