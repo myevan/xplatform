@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 2.8)
 
-project(libogg-1.3.2)
+project(libogg C)
+
+set(VERSION "1.3.2")
 
 # CMakeLists.txt to build static libogg for Polycode
 
