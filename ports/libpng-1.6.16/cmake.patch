@@ -1,0 +1,47 @@
+Only in sources/libpng-1.6.16/: CMakeLists.bak
+diff -ubr archives/libpng-1.6.16/CMakeLists.txt sources/libpng-1.6.16/CMakeLists.txt
+--- archives/libpng-1.6.16/CMakeLists.txt	2014-12-22 12:08:07.000000000 +0900
++++ sources/libpng-1.6.16/CMakeLists.txt	2015-03-27 02:28:22.000000000 +0900
+@@ -21,7 +21,10 @@
+ set(PNGLIB_VERSION ${PNGLIB_MAJOR}.${PNGLIB_MINOR}.${PNGLIB_RELEASE})
+ 
+ # needed packages
+-find_package(ZLIB REQUIRED)
++include_directories("${PROJECT_SOURCE_DIR}/../zlib-1.2.8/__build")
++include_directories("${PROJECT_SOURCE_DIR}/../zlib-1.2.8")
++link_directories("${PROJECT_SOURCE_DIR}/../zlib-1.2.8")
++
+ include_directories(${ZLIB_INCLUDE_DIR})
+ 
+ if(NOT WIN32)
+@@ -42,7 +45,7 @@
+ if(DEFINED PNG_SHARED)
+   option(PNG_SHARED "Build shared lib" ${PNG_SHARED})
+ else()
+-  option(PNG_SHARED "Build shared lib" ON)
++  option(PNG_SHARED "Build shared lib" OFF)
+ endif()
+ if(DEFINED PNG_STATIC)
+   option(PNG_STATIC "Build static lib" ${PNG_STATIC})
+@@ -50,7 +53,7 @@
+   option(PNG_STATIC "Build static lib" ON)
+ endif()
+ 
+-option(PNG_TESTS  "Build libpng tests" YES)
++option(PNG_TESTS  "Build libpng tests" NO)
+ 
+ # Many more configuration options could be added here
+ option(PNG_DEBUG         "Build with debug output" NO)
+@@ -284,7 +287,7 @@
+       ${PNG_EXPORT_RULE}
+       RUNTIME DESTINATION bin
+       LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+-      ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
++      ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/static)
+ 
+   if(PNG_SHARED)
+     # Create a symlink for libpng.dll.a => libpng16.dll.a on Cygwin
+Only in sources/libpng-1.6.16/: __build
+Only in sources/libpng-1.6.16/: cmake.patch
+Only in sources/libpng-1.6.16/: info.json
+Only in sources/libpng-1.6.16/: pnglibconf.h
