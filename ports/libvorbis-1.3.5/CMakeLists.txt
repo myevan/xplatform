@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 2.8)
 
-project(libvorbis-1.3.5)
+project(libvorbis C)
+
+set(VERSION "1.3.5")
 
 include(cmake/configure.cmake)
 
