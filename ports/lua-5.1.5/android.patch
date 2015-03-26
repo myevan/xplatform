@@ -1,6 +1,6 @@
-diff -ubr ../../archives/lua-5.1.5/src/llex.c ../../sources/lua-5.1.5/src/llex.c
---- ../../archives/lua-5.1.5/src/llex.c	2009-11-23 23:58:22.000000000 +0900
-+++ ../../sources/lua-5.1.5/src/llex.c	2015-03-27 01:16:26.000000000 +0900
+diff -ubr archives/lua-5.1.5/src/llex.c sources/lua-5.1.5/src/llex.c
+--- archives/lua-5.1.5/src/llex.c	2009-11-23 23:58:22.000000000 +0900
++++ sources/lua-5.1.5/src/llex.c	2015-03-27 01:16:26.000000000 +0900
 @@ -178,9 +178,14 @@
  
  static void trydecpoint (LexState *ls, SemInfo *seminfo) {
