@@ -1,6 +1,24 @@
 diff -ubr archives/jansson-2.7/CMakeLists.txt sources/jansson-2.7/CMakeLists.txt
 --- archives/jansson-2.7/CMakeLists.txt	2014-10-02 15:05:36.000000000 +0900
-+++ sources/jansson-2.7/CMakeLists.txt	2015-03-27 01:40:42.000000000 +0900
++++ sources/jansson-2.7/CMakeLists.txt	2015-03-27 02:06:14.000000000 +0900
+@@ -363,7 +363,7 @@
+ 
+ 
+ # For building Documentation (uses Sphinx)
+-option(JANSSON_BUILD_DOCS "Build documentation (uses python-sphinx)." ON)
++option(JANSSON_BUILD_DOCS "Build documentation (uses python-sphinx)." OFF)
+ if (JANSSON_BUILD_DOCS)
+    find_package(Sphinx)
+ 
+@@ -449,7 +449,7 @@
+ endif ()
+ 
+ 
+-option(JANSSON_WITHOUT_TESTS "Don't build tests ('make test' to execute tests)" OFF)
++option(JANSSON_WITHOUT_TESTS "Don't build tests ('make test' to execute tests)" ON)
+ 
+ if (NOT JANSSON_WITHOUT_TESTS)
+    option(JANSSON_TEST_WITH_VALGRIND "Enable valgrind tests." OFF)
 @@ -635,7 +635,7 @@
  install(TARGETS jansson
          EXPORT JanssonTargets
@@ -9,4 +27,4 @@ diff -ubr archives/jansson-2.7/CMakeLists.txt sources/jansson-2.7/CMakeLists.txt
 +        ARCHIVE DESTINATION "${JANSSON_INSTALL_LIB_DIR}/static" COMPONENT lib
          RUNTIME DESTINATION "${JANSSON_INSTALL_BIN_DIR}" COMPONENT lib # Windows DLLs
          PUBLIC_HEADER DESTINATION "${JANSSON_INSTALL_INCLUDE_DIR}" COMPONENT dev)
-
+ 
