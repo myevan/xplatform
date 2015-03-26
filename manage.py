@@ -52,8 +52,9 @@ def copy_files(source_dir_path, target_dir_path):
 
 
 def apply_patches(patch_dir_path, target_dir_path):
+    print('apply_patches')
     for patch_file_path in glob.glob(os.path.join(patch_dir_path, '*.patch')):
-        print('apply_patch:{0}'.format(patch_file_path))
+        print('\tpatch_file:{0}'.format(patch_file_path))
         patch_set = patch.fromfile(patch_file_path)
         patch_set.apply(strip=2, root=target_dir_path)
 
