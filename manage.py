@@ -167,14 +167,18 @@ def build_project(port_dir_abs_path, port_info_dict, command_name, command_optio
     elif command_name == 'build_and':
         platform_dir_abs_path = prepare_platform_directory('and', project_name)
 
-        subprocess.call([
+        cmake_args = [
            CMAKE_EXE_ABS_PATH,
            source_dir_abs_path,
            '-DCMAKE_TOOLCHAIN_FILE=../../../toolchains/android.cmake', 
            '-DANDROID_NDK={0}'.format(os.environ['NDK_ROOT']), 
            '-DCMAKE_BUILD_TYPE=Release', 
            '-DANDROID_ABI=armeabi-v7a with NEON', 
-           '-DCMAKE_INSTALL_PREFIX={0}'.format(platform_dir_abs_path)] + command_options)
+           '-DCMAKE_INSTALL_PREFIX={0}'.format(platform_dir_abs_path)] 
+        cmake_args += command_options
+        print(' '.join(cmake_args))
+        subprocess.call(cmake_args)
+        subprocess.call(['make', 'VERBOSE=1'])
         subprocess.call(['make', 'install'])
     else:
         print('NOT_SUPPORTED_COMMAND:{0}'.format(command_name))
