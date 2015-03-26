@@ -1,0 +1,12 @@
+diff -ubr archives/freetype-2.5.5/CMakeLists.txt sources/freetype-2.5.5/CMakeLists.txt
+--- archives/freetype-2.5.5/CMakeLists.txt	2014-12-31 03:50:03.000000000 +0900
++++ sources/freetype-2.5.5/CMakeLists.txt	2015-03-21 01:03:29.000000000 +0900
+@@ -223,7 +223,7 @@
+ install(TARGETS freetype
+   RUNTIME DESTINATION bin
+   LIBRARY DESTINATION lib
+-  ARCHIVE DESTINATION lib
++  ARCHIVE DESTINATION lib/static
+   FRAMEWORK DESTINATION Library/Frameworks
+ )
+ 
