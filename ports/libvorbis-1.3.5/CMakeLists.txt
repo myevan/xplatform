@@ -105,8 +105,8 @@ if(MSVC)
     list(APPEND libvorbis_SRCS win32/vorbis.def)
 endif(MSVC)
 
-add_library(vorbis ${VORBIS_SOURCES})
-add_library(vorbisfile lib/vorbisfile.c include/vorbis/vorbisfile.h)
+add_library(vorbis STATIC ${VORBIS_SOURCES})
+add_library(vorbisfile STATIC lib/vorbisfile.c include/vorbis/vorbisfile.h)
 
 install(TARGETS vorbis vorbisfile
     RUNTIME DESTINATION bin
