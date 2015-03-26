@@ -60,16 +60,23 @@ set_target_properties(lua_shared PROPERTIES OUTPUT_NAME lua)
 add_library(lua_static STATIC ${CORE_SOURCES} ${LIB_SOURCES})
 set_target_properties(lua_static PROPERTIES OUTPUT_NAME lua)
 
-add_executable (lua_shell ${SHELL_SOURCES})
-target_link_libraries(lua_shell lua_static)
-set_target_properties(lua_shell PROPERTIES OUTPUT_NAME lua)
-
-add_executable (lua_compiler ${COMPILER_SOURCES})
-target_link_libraries(lua_compiler lua_static)
-
 install(FILES ${PUBLIC_HEADERS} DESTINATION include)
 
-install(TARGETS lua_shared lua_static lua_shell lua_compiler
-        RUNTIME DESTINATION bin
-        LIBRARY DESTINATION lib
-        ARCHIVE DESTINATION lib/static)
+if (IOS)
+    install(TARGETS lua_shared lua_static
+            RUNTIME DESTINATION bin
+            LIBRARY DESTINATION lib
+            ARCHIVE DESTINATION lib/static)
+else()
+    add_executable (lua_shell ${SHELL_SOURCES})
+    target_link_libraries(lua_shell lua_static)
+    set_target_properties(lua_shell PROPERTIES OUTPUT_NAME lua)
+
+    add_executable (lua_compiler ${COMPILER_SOURCES})
+    target_link_libraries(lua_compiler lua_static)
+
+    install(TARGETS lua_shared lua_static lua_shell lua_compiler
+            RUNTIME DESTINATION bin
+            LIBRARY DESTINATION lib
+            ARCHIVE DESTINATION lib/static)
+endif()
