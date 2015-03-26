@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 import os
-import tarfile
+import glob
 import shutil
+import tarfile
 import subprocess
 
 from scripts import wget
+from scripts import patch
 from urlparse import urlparse
 
 
@@ -49,6 +51,13 @@ def copy_files(source_dir_path, target_dir_path):
             shutil.copyfile(source_file_path, target_file_path)
 
 
+def apply_patches(patch_dir_path, target_dir_path):
+    for patch_file_path in glob.glob(os.path.join(patch_dir_path, '*.patch')):
+        print('apply_patch:{0}'.format(patch_file_path))
+        patch_set = patch.fromfile(patch_file_path)
+        patch_set.apply(strip=2, root=target_dir_path)
+
+
 def find_cmake_abs_path():
     if os.name == 'nt': 
         return "c:/Program Files (x86)/CMake/bin/cmake.exe"
@@ -90,10 +99,15 @@ def build_project(port_dir_abs_path, port_info_dict, command_name, command_optio
 
     prepare_directory(ARCHIVES_DIR_ABS_PATH)
     download_file(remote_archive_uri, archive_file_abs_path)
+    if command_name == 'download':
+        return
 
     prepare_directory(source_dir_abs_path)
     extract_file(archive_file_abs_path, source_dir_abs_path)
     copy_files(port_dir_abs_path, source_dir_abs_path)
+    apply_patches(port_dir_abs_path, source_dir_abs_path)
+    if command_name == 'prepare':
+        return
 
     if command_name == 'build':
         platform_dir_abs_path = prepare_platform_directory('posix', project_name)
