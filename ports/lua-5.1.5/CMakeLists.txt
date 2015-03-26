@@ -54,20 +54,20 @@ set(PUBLIC_HEADERS
     src/lauxlib.h
     src/luaconf.h)
 
-add_library(lua_shared SHARED ${CORE_SOURCES} ${LIB_SOURCES})
-set_target_properties(lua_shared PROPERTIES OUTPUT_NAME lua)
-
 add_library(lua_static STATIC ${CORE_SOURCES} ${LIB_SOURCES})
 set_target_properties(lua_static PROPERTIES OUTPUT_NAME lua)
 
 install(FILES ${PUBLIC_HEADERS} DESTINATION include)
 
-if (IOS)
-    install(TARGETS lua_shared lua_static
+if (IOS OR ANDROID)
+    install(TARGETS lua_static
             RUNTIME DESTINATION bin
             LIBRARY DESTINATION lib
             ARCHIVE DESTINATION lib/static)
 else()
+    add_library(lua_shared SHARED ${CORE_SOURCES} ${LIB_SOURCES})
+    set_target_properties(lua_shared PROPERTIES OUTPUT_NAME lua)
+
     add_executable (lua_shell ${SHELL_SOURCES})
     target_link_libraries(lua_shell lua_static)
     set_target_properties(lua_shell PROPERTIES OUTPUT_NAME lua)
