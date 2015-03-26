@@ -23,10 +23,10 @@ if(MSVC)
     list(APPEND OGG_SOURCES win32/ogg.def)
 endif (MSVC)
 
-if("${CMAKE_SYSTEM_NAME}" STREQUAL "Linux")
+if("${CMAKE_SYSTEM_NAME}" STREQUAL "LinuX")
     # libogg expects configure to be called on linux to
     # generate config_types.h
-    list(append OGG_HEADERS include/ogg/config_types.h)
+    list(APPEND OGG_HEADERS include/ogg/config_types.h)
 
     add_custom_command(OUTPUT include/ogg/config_types.h
         COMMAND ./configure
@@ -34,9 +34,14 @@ if("${CMAKE_SYSTEM_NAME}" STREQUAL "Linux")
         # so configure_types.h will be regenerated.
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         )
+else()
+    include(cmake/configure.cmake)
+    configure_file(config.h.cmake ${CMAKE_CURRENT_SOURCE_DIR}/config.h)
+    configure_file(include/ogg/config_types.h.cmake ${CMAKE_CURRENT_SOURCE_DIR}/include/ogg/config_types.h)
+    add_definitions(-DHAVE_CONFIG_H)
 endif()
 
-add_library(ogg ${OGG_SOURCES})
+add_library(ogg STATIC ${OGG_SOURCES})
 
 install(TARGETS ogg
     RUNTIME DESTINATION bin
