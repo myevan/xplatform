@@ -1,0 +1,23 @@
+diff -ubr archives/zlib-1.2.8/CMakeLists.txt sources/zlib-1.2.8/CMakeLists.txt
+--- archives/zlib-1.2.8/CMakeLists.txt	2013-04-29 07:57:10.000000000 +0900
++++ sources/zlib-1.2.8/CMakeLists.txt	2015-03-18 23:09:58.000000000 +0900
+@@ -5,6 +5,9 @@
+ 
+ set(VERSION "1.2.8")
+ 
++# to distinguish between debug and release lib
++set(CMAKE_DEBUG_POSTFIX "_d")
++
+ option(ASM686 "Enable building i686 assembly implementation")
+ option(AMD64 "Enable building amd64 assembly implementation")
+ 
+@@ -213,7 +216,7 @@
+ if(NOT SKIP_INSTALL_LIBRARIES AND NOT SKIP_INSTALL_ALL )
+     install(TARGETS zlib zlibstatic
+         RUNTIME DESTINATION "${INSTALL_BIN_DIR}"
+-        ARCHIVE DESTINATION "${INSTALL_LIB_DIR}"
++        ARCHIVE DESTINATION "${INSTALL_LIB_DIR}/static"
+         LIBRARY DESTINATION "${INSTALL_LIB_DIR}" )
+ endif()
+ if(NOT SKIP_INSTALL_HEADERS AND NOT SKIP_INSTALL_ALL )
+
