@@ -1,0 +1,72 @@
+diff -ubr archives/openal-1.16.0/CMakeLists.txt sources/openal-1.16.0/CMakeLists.txt
+--- archives/openal-1.16.0/CMakeLists.txt	2014-08-15 09:30:11.000000000 +0900
++++ sources/openal-1.16.0/CMakeLists.txt	2015-03-27 02:38:50.000000000 +0900
+@@ -4,6 +4,11 @@
+ 
+ PROJECT(OpenAL)
+ 
++set(VERSION "1.16.0")
++
++# to distinguish between debug and release lib
++set(CMAKE_DEBUG_POSTFIX "_d")
++
+ IF(COMMAND CMAKE_POLICY)
+   CMAKE_POLICY(SET CMP0003 NEW)
+   CMAKE_POLICY(SET CMP0005 NEW)
+@@ -30,7 +35,7 @@
+ 
+ OPTION(ALSOFT_WERROR  "Treat compile warnings as errors"      OFF)
+ 
+-OPTION(ALSOFT_UTILS          "Build and install utility programs"         ON)
++OPTION(ALSOFT_UTILS          "Build and install utility programs"         OFF)
+ OPTION(ALSOFT_NO_CONFIG_UTIL "Disable building the alsoft-config utility" OFF)
+ 
+ OPTION(ALSOFT_EXAMPLES  "Build and install example programs"  ON)
+@@ -83,7 +88,7 @@
+ ENDIF()
+ 
+ IF(NOT LIBTYPE)
+-    SET(LIBTYPE SHARED)
++    SET(LIBTYPE STATIC)
+ ENDIF()
+ 
+ SET(LIB_MAJOR_VERSION "1")
+@@ -1097,7 +1102,7 @@
+ INSTALL(TARGETS ${LIBNAME}
+         RUNTIME DESTINATION bin
+         LIBRARY DESTINATION "lib${LIB_SUFFIX}"
+-        ARCHIVE DESTINATION "lib${LIB_SUFFIX}"
++        ARCHIVE DESTINATION "lib${LIB_SUFFIX}/static"
+ )
+ INSTALL(FILES include/AL/al.h
+               include/AL/alc.h
+@@ -1162,7 +1167,7 @@
+     INSTALL(TARGETS openal-info makehrtf
+             RUNTIME DESTINATION bin
+             LIBRARY DESTINATION "lib${LIB_SUFFIX}"
+-            ARCHIVE DESTINATION "lib${LIB_SUFFIX}"
++            ARCHIVE DESTINATION "lib${LIB_SUFFIX}/static"
+     )
+ 
+     MESSAGE(STATUS "Building utility programs")
+@@ -1202,7 +1207,7 @@
+         INSTALL(TARGETS alstream alreverb allatency alloopback
+                 RUNTIME DESTINATION bin
+                 LIBRARY DESTINATION "lib${LIB_SUFFIX}"
+-                ARCHIVE DESTINATION "lib${LIB_SUFFIX}"
++                ARCHIVE DESTINATION "lib${LIB_SUFFIX}/static"
+         )
+ 
+         SET(FFVER_OK FALSE)
+@@ -1238,7 +1243,7 @@
+             INSTALL(TARGETS alffplay
+                     RUNTIME DESTINATION bin
+                     LIBRARY DESTINATION "lib${LIB_SUFFIX}"
+-                    ARCHIVE DESTINATION "lib${LIB_SUFFIX}"
++                    ARCHIVE DESTINATION "lib${LIB_SUFFIX}/static"
+             )
+             MESSAGE(STATUS "Building SDL and FFmpeg example programs")
+         ELSE()
+Only in sources/openal-1.16.0/: __build
+Only in sources/openal-1.16.0/: cmake.patch
+Only in sources/openal-1.16.0/: info.json
