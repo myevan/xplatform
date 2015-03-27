@@ -84,6 +84,18 @@ def prepare_platform_directory(platform_name, project_name):
     prepare_directory(platform_dir_abs_path)
     return platform_dir_abs_path
 
+
+def make_universal_library(lib_dir_path, output_dir_path):
+    lib_file_paths = [lib_file_path for lib_file_path in glob.glob(os.path.join(lib_dir_path, '*.a'))]
+    lib_file_name = os.path.split(lib_file_paths[0])[1]
+
+    output_file_path = os.path.join(output_dir_path, lib_file_name)
+    make_universal_debug_lib_args = ['lipo', '-create', '-output', output_file_path]
+    make_universal_debug_lib_args += lib_file_paths
+    print(' '.join(make_universal_debug_lib_args))
+    subprocess.call(make_universal_debug_lib_args)
+
+
 def build_project(port_dir_abs_path, port_info_dict, command_name, command_options=[]):
     remote_archive_uri = port_info_dict['REMOTE_ARCHIVE_URI']
     archive_file_name = port_info_dict.get('LOCAL_ARCHIVE_FILE_NAME', os.path.split(urlparse(remote_archive_uri).path)[1])
@@ -164,26 +176,16 @@ def build_project(port_dir_abs_path, port_info_dict, command_name, command_optio
 
         os.system('''"{0}" -G Xcode {1} -DCMAKE_TOOLCHAIN_FILE=../../../toolchains/ios.cmake  -DCMAKE_INSTALL_PREFIX={2} {3}'''.format(
             CMAKE_EXE_ABS_PATH, source_dir_abs_path, platform_dir_abs_path, ' '.join(command_options)))
+        os.system('''xcodebuild -configuration Debug -sdk iphoneos -arch armv7 -arch armv7s -arch arm64''')
+        os.system('''xcodebuild -configuration Release -sdk iphoneos -arch armv7 -arch armv7s -arch arm64''')
+        os.system('''xcodebuild -configuration Debug -sdk iphonesimulator -arch i386 -arch x86_64''')
+        os.system('''xcodebuild -configuration Release -sdk iphonesimulator -arch i386 -arch x86_64''')
+        os.system('''xcodebuild -configuration Debug -target install''')
+        os.system('''xcodebuild -configuration Release -target install''')
 
-        os.system('''xcodebuild -configuration Debug''')
-        os.system('''xcodebuild -configuration Debug -sdk iphoneos''')
-        os.system('''xcodebuild -configuration Release''')
-        os.system('''xcodebuild -configuration Release -sdk iphoneos''')
-
-        # TODO: make universal library
-        output_file_name = ""
-        if False and output_file_name.endswith('.a'):
-            output_head, output_tail = os.path.split(output_file_name)
-            debug_output_file_path = output_head + '_d' + output_tail
-            debug_dev_output_file_path = os.path.join(build_dir_abs_path, 'Debug-iphoneos', output_file_name)
-            debug_sim_output_ile_path = os.path.join(build_dir_abs_path, 'Debug-iphonesimulator', output_file_name)
-            release_output_file_path = output_head + '_d' + output_tail
-            release_dev_output_file_path = os.path.join(build_dir_abs_path, 'Release-iphoneos', output_file_name)
-            release_sim_output_file_path = os.path.join(build_dir_abs_path, 'Release-iphonesimulator', output_file_name)
-            os.system('''lipo -create -output {1} {1} {2}'''.format(
-                archive_name, debug_output_file_path, debug_dev_output_file_path, debug_sim_output_ile_path))
-            os.system('''lipo -create -output {1} {1} {2}'''.format(
-                archive_name, release_output_file_path, release_dev_output_file_path, release_sim_output_file_path))
+        platform_lib_dir_abs_path = os.path.join(platform_dir_abs_path, 'lib', 'static')
+        make_universal_library(os.path.join(build_dir_abs_path, 'Debug*'), platform_lib_dir_abs_path)
+        make_universal_library(os.path.join(build_dir_abs_path, 'Release*'), platform_lib_dir_abs_path)
     elif platform_name == 'and':
         platform_dir_abs_path = prepare_platform_directory('and', project_name)
 
