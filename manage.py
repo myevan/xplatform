@@ -39,7 +39,14 @@ def extract_file(archive_file_path, target_dir_path):
 
 def copy_files(source_dir_path, target_dir_path):
     for base_path, dir_names, file_names in os.walk(source_dir_path):
+        for dir_name in list(dir_names):
+            if dir_name == 'platform':
+                dir_names.remove('platform')
+
         for file_name in file_names:
+            if file_name.endswith('.patch'):
+                continue
+
             source_file_path = os.path.join(base_path, file_name)
             target_file_path = os.path.normpath(os.path.join(
                 target_dir_path, base_path[len(source_dir_path)+1:], file_name))
@@ -52,11 +59,13 @@ def copy_files(source_dir_path, target_dir_path):
 
 
 def apply_patches(patch_dir_path, target_dir_path):
-    print('apply_patches')
-    for patch_file_path in glob.glob(os.path.join(patch_dir_path, '*.patch')):
-        print('\tpatch_file:{0}'.format(patch_file_path))
-        patch_set = patch.fromfile(patch_file_path)
-        patch_set.apply(strip=2, root=target_dir_path)
+    patch_file_paths = glob.glob(os.path.join(patch_dir_path, '*.patch'))
+    if patch_file_paths:
+        print('apply_patch_dir:{0}'.format(patch_dir_path))
+        for patch_file_path in patch_file_paths:
+            print('\tpatch_file:{0}'.format(patch_file_path))
+            patch_set = patch.fromfile(patch_file_path)
+            patch_set.apply(strip=2, root=target_dir_path)
 
 
 def find_cmake_abs_path():
@@ -74,7 +83,6 @@ def prepare_platform_directory(platform_name, project_name):
     platform_dir_abs_path = os.path.join(PLATFORMS_DIR_ABS_PATH, platform_name, project_name)
     prepare_directory(platform_dir_abs_path)
     return platform_dir_abs_path
-
 
 def build_project(port_dir_abs_path, port_info_dict, command_name, command_options=[]):
     remote_archive_uri = port_info_dict['REMOTE_ARCHIVE_URI']
@@ -107,16 +115,28 @@ def build_project(port_dir_abs_path, port_info_dict, command_name, command_optio
     extract_file(archive_file_abs_path, source_dir_abs_path)
     copy_files(port_dir_abs_path, source_dir_abs_path)
     apply_patches(port_dir_abs_path, source_dir_abs_path)
-    if command_name == 'prepare':
-        return
 
-    if command_name == 'build':
+    if command_name.startswith('build'):
+        tokens = command_name.split('_')
+        if len(tokens) == 2:
+            platform_name = tokens[1]
+        else:
+            platform_name = 'posix'
+    else:
+        print('NOT_SUPPORTED_COMMAND:{0}'.format(command_name))
+
+    platform_dir_abs_path = os.path.join(port_dir_abs_path, 'platform', platform_name)
+    if os.access(platform_dir_abs_path, os.R_OK):
+        copy_files(platform_dir_abs_path, source_dir_abs_path)
+        apply_patches(platform_dir_abs_path, source_dir_abs_path)
+
+    if platform_name == 'posix':
         platform_dir_abs_path = prepare_platform_directory('posix', project_name)
 
         os.system('''"{0}" {1} -DCMAKE_INSTALL_PREFIX={2} {3}'''.format(
             CMAKE_EXE_ABS_PATH, source_dir_abs_path, platform_dir_abs_path, ' '.join(command_options)))
         os.system('''make install''')
-    elif command_name == 'build_win':
+    elif platform_name == 'win':
         platform_dir_abs_path = prepare_platform_directory('win/VS2013', project_name)
 
         subprocess.call([
@@ -132,14 +152,14 @@ def build_project(port_dir_abs_path, port_info_dict, command_name, command_optio
         subprocess.call([vs_devenv_abs_path, vs_solution_abs_path, '/build', 'Debug', '/project', 'INSTALL'])
         subprocess.call([vs_devenv_abs_path, vs_solution_abs_path, '/build', 'Release', '/project', 'INSTALL'])
 
-    elif command_name == 'build_osx':
+    elif platform_name == 'osx':
         platform_dir_abs_path = prepare_platform_directory('osx', project_name)
 
         os.system('''"{0}" -G Xcode {1} -DCMAKE_INSTALL_PREFIX={2} {3}'''.format(
             CMAKE_EXE_ABS_PATH, source_dir_abs_path, platform_dir_abs_path, ' '.join(command_options)))
         os.system('''xcodebuild -configuration Debug -target install''')
         os.system('''xcodebuild -configuration Release -target install''')
-    elif command_name == 'build_ios':
+    elif platform_name == 'ios':
         platform_dir_abs_path = prepare_platform_directory('ios', project_name)
 
         os.system('''"{0}" -G Xcode {1} -DCMAKE_TOOLCHAIN_FILE=../../../toolchains/ios.cmake  -DCMAKE_INSTALL_PREFIX={2} {3}'''.format(
@@ -164,7 +184,7 @@ def build_project(port_dir_abs_path, port_info_dict, command_name, command_optio
                 archive_name, debug_output_file_path, debug_dev_output_file_path, debug_sim_output_ile_path))
             os.system('''lipo -create -output {1} {1} {2}'''.format(
                 archive_name, release_output_file_path, release_dev_output_file_path, release_sim_output_file_path))
-    elif command_name == 'build_and':
+    elif platform_name == 'and':
         platform_dir_abs_path = prepare_platform_directory('and', project_name)
 
         cmake_args = [
@@ -181,7 +201,7 @@ def build_project(port_dir_abs_path, port_info_dict, command_name, command_optio
         subprocess.call(['make', 'VERBOSE=1'])
         subprocess.call(['make', 'install'])
     else:
-        print('NOT_SUPPORTED_COMMAND:{0}'.format(command_name))
+        print('NOT_SUPPORTED_PLATFORM:{0}'.format(platform_name))
 
 
 ARCHIVES_DIR_REL_PATH = "./archives"
