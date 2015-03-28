@@ -3,10 +3,7 @@ project (lua C)
 
 set(VERSION "5.1.5")
 
-# to distinguish between debug and release lib
-set(CMAKE_DEBUG_POSTFIX "_d")
-
-include(cmake/msvc.cmake)
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/../../cmakes")
 
 set(CORE_SOURCES
     src/lapi.c 
@@ -53,6 +50,8 @@ set(PUBLIC_HEADERS
     src/lualib.h
     src/lauxlib.h
     src/luaconf.h)
+
+include(xplatform)
 
 add_library(lua_static STATIC ${CORE_SOURCES} ${LIB_SOURCES})
 set_target_properties(lua_static PROPERTIES OUTPUT_NAME lua)
