@@ -1,6 +1,6 @@
 diff -ubr archives/zlib-1.2.8/CMakeLists.txt sources/zlib-1.2.8/CMakeLists.txt
 --- archives/zlib-1.2.8/CMakeLists.txt	2013-04-29 07:57:10.000000000 +0900
-+++ sources/zlib-1.2.8/CMakeLists.txt	2015-03-18 23:09:58.000000000 +0900
++++ sources/zlib-1.2.8/CMakeLists.txt	2015-03-28 22:41:43.000000000 +0900
 @@ -5,6 +5,9 @@
  
  set(VERSION "1.2.8")
@@ -20,4 +20,28 @@ diff -ubr archives/zlib-1.2.8/CMakeLists.txt sources/zlib-1.2.8/CMakeLists.txt
          LIBRARY DESTINATION "${INSTALL_LIB_DIR}" )
  endif()
  if(NOT SKIP_INSTALL_HEADERS AND NOT SKIP_INSTALL_ALL )
-
+@@ -247,3 +250,24 @@
+     target_link_libraries(minigzip64 zlib)
+     set_target_properties(minigzip64 PROPERTIES COMPILE_FLAGS "-D_FILE_OFFSET_BITS=64")
+ endif()
++
++
++#============================================================================
++# Contrib libraries
++#============================================================================
++set(MINIZIP_SRCS
++  contrib/minizip/ioapi.c
++  contrib/minizip/miniunz.c
++  contrib/minizip/minizip.c
++  contrib/minizip/unzip.c
++  contrib/minizip/zip.c
++  contrib/minizip/mztools.c
++)
++
++add_library(minizip ${MINIZIP_SRCS})
++
++install(
++    TARGETS minizip
++    LIBRARY DESTINATION lib 
++    ARCHIVE DESTINATION lib/static
++)
