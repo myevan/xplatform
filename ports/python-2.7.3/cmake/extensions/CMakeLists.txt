@@ -65,11 +65,14 @@ add_python_extension(syslog REQUIRES UNIX SOURCES syslogmodule.c)
 add_python_extension(termios REQUIRES UNIX SOURCES termios.c)
 
 # MacOSX-only extensions
+if(IOS)
+else()
 add_python_extension(_scproxy
     REQUIRES APPLE HAVE_LIBSYSTEMCONFIGURATION
     SOURCES ${SRC_DIR}/Mac/Modules/_scproxy.c
     LIBRARIES ${HAVE_LIBSYSTEMCONFIGURATION}
 )
+endif()
 
 # Linux-only extensions
 add_python_extension(linuxaudiodev REQUIRES LINUX SOURCES linuxaudiodev.c)

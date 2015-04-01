@@ -126,7 +126,10 @@ endif()
 message(STATUS "SRC_DIR: ${SRC_DIR}")
 
 # Proceed to the configure checks
-include(cmake/ConfigureChecks.cmake)
+if(IOS OR ANDROID)
+else()
+    include(cmake/ConfigureChecks.cmake)
+endif()
 
 if(NOT BUILD_SHARED AND NOT BUILD_STATIC)
     message(FATAL_ERROR "One or both of BUILD_SHARED or BUILD_STATIC must be set")
@@ -176,7 +179,9 @@ set(EXTRA_PYTHONPATH "" CACHE STRING
     "A colon (:) separated list of extra paths to add to the PYTHONPATH")
 
 # Configure 'pyconfig.h'
-if(UNIX)
+if(IOS OR ANDROID)
+    set(PYCONFIG_BUILD_DIR ${SRC_DIR})
+elseif(UNIX)
     set(PYCONFIG_BUILD_DIR ${BIN_BUILD_DIR})
     configure_file(cmake/config-unix/pyconfig.h.in
                    ${PYCONFIG_BUILD_DIR}/pyconfig.h)
@@ -185,7 +190,7 @@ elseif(WIN32)
                                           # live along side the python executable.
                                           # See function '_init_posix()' and '_init_non_posix()'
                                           # in 'Lib/sysconfig.py'
-endif(UNIX)
+endif()
 
 # Install 'pyconfig.h'
 install(FILES ${PYCONFIG_BUILD_DIR}/pyconfig.h
@@ -233,7 +238,10 @@ add_subdirectory(cmake/extensions CMakeBuild/extensions)
 # Add the other subdirectories
 add_subdirectory(cmake/pgen CMakeBuild/pgen)
 add_subdirectory(cmake/libpython CMakeBuild/libpython)
-add_subdirectory(cmake/python CMakeBuild/python)
+if(IOS OR ANDROID)
+else()
+    add_subdirectory(cmake/python CMakeBuild/python)
+endif()
 add_subdirectory(cmake/include CMakeBuild/include)
 add_subdirectory(cmake/lib CMakeBuild/lib)
 
@@ -271,19 +279,21 @@ if(UNIX)
 
 endif(UNIX)
 
-if(BUILD_TESTING)
-    set(EXTRATESTOPTS -v)
-    set(TESTOPTS -l ${EXTRATESTOPTS})
-    set(TESTPROG ${CMAKE_BINARY_DIR}/${PYTHONHOME}/test/regrtest.py)
-    set(TESTPYTHONOPTS )
-    set(TESTPYTHON $<TARGET_FILE:python> -Wd -3 -E -tt ${TESTPYTHONOPTS})
+if(IOS OR ANDROID)
+else()
+    if(BUILD_TESTING)
+        set(EXTRATESTOPTS -v)
+        set(TESTOPTS -l ${EXTRATESTOPTS})
+        set(TESTPROG ${CMAKE_BINARY_DIR}/${PYTHONHOME}/test/regrtest.py)
+        set(TESTPYTHONOPTS )
+        set(TESTPYTHON $<TARGET_FILE:python> -Wd -3 -E -tt ${TESTPYTHONOPTS})
 
-    include(cmake/UnitTests.cmake)
-    foreach(unittest ${unittests})
-      add_test(NAME ${unittest} COMMAND ${TESTPYTHON} ${TESTPROG} ${TESTOPTS} ${unittest})
-    endforeach(unittest)
-endif(BUILD_TESTING)
-
+        include(cmake/UnitTests.cmake)
+        foreach(unittest ${unittests})
+          add_test(NAME ${unittest} COMMAND ${TESTPYTHON} ${TESTPROG} ${TESTOPTS} ${unittest})
+        endforeach(unittest)
+    endif(BUILD_TESTING)
+endif()
 
 if(HAVE_CONFIGURE_PACKAGE_CONFIG_FILE AND HAVE_WRITE_BASIC_PACKAGE_VERSION_FILE)
 

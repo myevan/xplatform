@@ -3,6 +3,7 @@ set(PYTHON_SOURCES
 )
 
 add_executable(python ${PYTHON_SOURCES})
+
 set_property(
     TARGET python
     PROPERTY RUNTIME_OUTPUT_DIRECTORY ${BIN_BUILD_DIR}
