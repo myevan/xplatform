@@ -85,12 +85,22 @@ def prepare_platform_directory(platform_name, project_name):
     return platform_dir_abs_path
 
 
-def make_universal_library(lib_dir_path, output_dir_path):
-    lib_file_paths = [lib_file_path for lib_file_path in glob.glob(os.path.join(lib_dir_path, '*.a'))]
-    lib_file_name = os.path.split(lib_file_paths[0])[1]
+def make_universal_library(output_dir_path, pattern, install_dir_path):
+    print("make_universal_library:{0} install:{1}".format(output_dir_path, install_dir_path))
+    lib_file_paths = []
+    for base_path, dir_names, file_names in os.walk(output_dir_path):
+        for file_name in file_names:
+            if file_name.endswith('.a'):
+                if ".build" in base_path and pattern in base_path:
+                    lib_file_path = os.path.join(base_path, file_name)
+                    print("found_lib:{0}".format(lib_file_path[len(output_dir_path) + 1:]))
+                    lib_file_paths.append(lib_file_path)
 
-    output_file_path = os.path.join(output_dir_path, lib_file_name)
-    make_universal_debug_lib_args = ['lipo', '-create', '-output', output_file_path]
+    lib_file_name = os.path.split(lib_file_paths[0])[1]
+    install_file_path = os.path.join(install_dir_path, lib_file_name)
+
+    prepare_directory(install_dir_path)
+    make_universal_debug_lib_args = ['lipo', '-create', '-output', install_file_path]
     make_universal_debug_lib_args += lib_file_paths
     print(' '.join(make_universal_debug_lib_args))
     subprocess.call(make_universal_debug_lib_args)
@@ -173,7 +183,6 @@ def build_project(port_dir_abs_path, port_info_dict, command_name, command_optio
         os.system('''xcodebuild -configuration Release -target install''')
     elif platform_name == 'ios':
         platform_dir_abs_path = prepare_platform_directory('ios', project_name)
-
         os.system('''"{0}" -G Xcode {1} -DCMAKE_TOOLCHAIN_FILE=../../../toolchains/ios.cmake  -DCMAKE_INSTALL_PREFIX={2} {3}'''.format(
             CMAKE_EXE_ABS_PATH, source_dir_abs_path, platform_dir_abs_path, ' '.join(command_options)))
         os.system('''xcodebuild -configuration Debug -sdk iphoneos -arch armv7 -arch armv7s -arch arm64''')
@@ -184,8 +193,11 @@ def build_project(port_dir_abs_path, port_info_dict, command_name, command_optio
         os.system('''xcodebuild -configuration Release -target install''')
 
         platform_lib_dir_abs_path = os.path.join(platform_dir_abs_path, 'lib', 'static')
-        make_universal_library(os.path.join(build_dir_abs_path, 'Debug*'), platform_lib_dir_abs_path)
-        make_universal_library(os.path.join(build_dir_abs_path, 'Release*'), platform_lib_dir_abs_path)
+        output_dir_rel_path = port_info_dict.get('OUTPUT_DIR', '')
+        output_dir_abs_path = os.path.join(build_dir_abs_path, 'CMakeBuild/libpython/Python27.build') if output_dir_rel_path else build_dir_abs_path
+
+        make_universal_library(output_dir_abs_path, 'Debug', platform_lib_dir_abs_path)
+        make_universal_library(output_dir_abs_path, 'Release', platform_lib_dir_abs_path)
     elif platform_name == 'and':
         platform_dir_abs_path = prepare_platform_directory('and', project_name)
 
