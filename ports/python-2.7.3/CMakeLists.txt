@@ -6,14 +6,16 @@ set(PY_VERSION_PATCH 3)
 
 set(PY_VERSION "${PY_VERSION_MAJOR}.${PY_VERSION_MINOR}.${PY_VERSION_PATCH}")
 
+project(Python${PY_VERSION_MAJOR}${PY_VERSION_MINOR} C)
+
+if(RELEASE_FORCE)
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     set(CMAKE_CONFIGURATION_TYPES Release CACHE STRING "Release configuration" FORCE)
     set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build." FORCE)
     # Set the possible values of build type for cmake-gui
     set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Release")
 endif()
-
-project(Python${PY_VERSION_MAJOR}${PY_VERSION_MINOR} C)
+endif()
 
 # This is the major version number of Python
 set(LIBPYTHON_VERSION ${PY_VERSION_MAJOR}.${PY_VERSION_MINOR})
@@ -21,6 +23,9 @@ if(MSVC)
     set(LIBPYTHON_VERSION ${PY_VERSION_MAJOR}${PY_VERSION_MINOR})
 endif(MSVC)
 set(LIBPYTHON python${LIBPYTHON_VERSION})
+
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/../../cmakes")
+include(xplatform)
 
 # Include helper functions
 include(cmake/Assembler.cmake)
@@ -30,7 +35,7 @@ include(CMakeParseArguments)
 include(CTest)
 
 # Options
-option(DOWNLOAD_SOURCES "Automatically download the Python sources" ON)
+option(DOWNLOAD_SOURCES "Automatically download the Python sources" OFF)
 option(BUILD_SHARED "Build a shared libpython library" OFF)
 option(BUILD_STATIC "Build a static libpython library" ON)
 option(USE_LIB64 "Search for dependencies and install to prefix/lib64 instead of prefix/lib" OFF)
