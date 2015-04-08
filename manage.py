@@ -67,6 +67,12 @@ def apply_patches(patch_dir_path, target_dir_path):
             patch_set = patch.fromfile(patch_file_path)
             patch_set.apply(strip=2, root=target_dir_path)
 
+def find_ndk_abs_path():
+    found_path = os.environ.get('NDK_HOME', None)
+    if found_path:
+        return found_path
+
+    return os.environ.get('NDK_ROOT', None)
 
 def find_cmake_abs_path():
     if os.name == 'nt': 
@@ -198,16 +204,34 @@ def build_project(port_dir_abs_path, port_info_dict, command_name, command_optio
 
         make_universal_library(output_dir_abs_path, 'Debug', platform_lib_dir_abs_path)
         make_universal_library(output_dir_abs_path, 'Release', platform_lib_dir_abs_path)
-    elif platform_name == 'and':
-        platform_dir_abs_path = prepare_platform_directory('and', project_name)
+    elif platform_name == 'and32':
+        platform_dir_abs_path = prepare_platform_directory('and/armeabi-v7a', project_name)
+        ndk_abs_path = find_ndk_abs_path()
 
         cmake_args = [
            CMAKE_EXE_ABS_PATH,
            source_dir_abs_path,
            '-DCMAKE_TOOLCHAIN_FILE=../../../toolchains/android.cmake', 
-           '-DANDROID_NDK={0}'.format(os.environ['NDK_ROOT']), 
+           '-DANDROID_NDK={0}'.format(ndk_abs_path), 
            '-DCMAKE_BUILD_TYPE=Release', 
-           '-DANDROID_ABI=armeabi-v7a with NEON', 
+           '-DANDROID_ABI=armeabi-v7a', 
+           '-DCMAKE_INSTALL_PREFIX={0}'.format(platform_dir_abs_path)] 
+        cmake_args += command_options
+        print(' '.join(cmake_args))
+        subprocess.call(cmake_args)
+        subprocess.call(['make', 'VERBOSE=1'])
+        subprocess.call(['make', 'install'])
+    elif platform_name == 'and64':
+        platform_dir_abs_path = prepare_platform_directory('and/arm64-v8a', project_name)
+        ndk_abs_path = find_ndk_abs_path()
+
+        cmake_args = [
+           CMAKE_EXE_ABS_PATH,
+           source_dir_abs_path,
+           '-DCMAKE_TOOLCHAIN_FILE=../../../toolchains/android.cmake', 
+           '-DANDROID_NDK={0}'.format(ndk_abs_path), 
+           '-DCMAKE_BUILD_TYPE=Release', 
+           '-DANDROID_ABI=arm64-v8a', 
            '-DCMAKE_INSTALL_PREFIX={0}'.format(platform_dir_abs_path)] 
         cmake_args += command_options
         print(' '.join(cmake_args))
@@ -234,7 +258,7 @@ if __name__ == '__main__':
     def main():
         if len(sys.argv) <= 2:
             print("USAGE:")
-            print("\t{0} [clean|build|build_win|build_osx|build_ios] [port_dir_path]".format(sys.argv[0]))
+            print("\t{0} [clean|build|build_win|build_osx|build_ios|build_and32|build_and64] [port_dir_path]".format(sys.argv[0]))
             return -1
 
         options = sys.argv[3:]
