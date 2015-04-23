@@ -3,7 +3,8 @@ set(CMAKE_DEBUG_POSTFIX "_d")
 
 # Force MT for MSVC
 if(MSVC)
-    if(USE_STATIC_LIBS)
+    if (NOT BUILD_SHARED_LIBS)
+        message("make msvc project runtime library: MT")
         set(CompilerFlags
             CMAKE_CXX_FLAGS
             CMAKE_CXX_FLAGS_DEBUG
