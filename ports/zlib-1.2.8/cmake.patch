@@ -19,7 +19,7 @@
          LIBRARY DESTINATION "${INSTALL_LIB_DIR}" )
  endif()
  if(NOT SKIP_INSTALL_HEADERS AND NOT SKIP_INSTALL_ALL )
-@@ -247,3 +250,36 @@
+@@ -247,3 +250,34 @@
      target_link_libraries(minigzip64 zlib)
      set_target_properties(minigzip64 PROPERTIES COMPILE_FLAGS "-D_FILE_OFFSET_BITS=64")
  endif()
@@ -43,8 +43,6 @@
 +    contrib/minizip/unzip.h
 +    contrib/minizip/zip.h
 +)
-+
-+add_library(minizip ${MINIZIP_SRCS})
 +
 +add_library(minizip ${MINIZIP_SRCS})
 +
