@@ -165,6 +165,7 @@ def build_project(port_dir_abs_path, port_info_dict, command_name, command_optio
             CMAKE_EXE_ABS_PATH, source_dir_abs_path, platform_dir_abs_path, ' '.join(command_options)))
         os.system('''make install''')
     elif platform_name == 'win':
+        solution_name = project_name.split('-')[0]
         platform_dir_abs_path = prepare_platform_directory('win/VS2013', project_name)
 
         subprocess.call([
@@ -174,11 +175,11 @@ def build_project(port_dir_abs_path, port_info_dict, command_name, command_optio
            '-DCMAKE_INSTALL_PREFIX={0}'.format(platform_dir_abs_path)] + command_options)
 
         vs_devenv_abs_path = find_visual_studio_devev()
-        vs_solution_abs_path = os.path.join(build_dir_abs_path, project_name + ".sln")
-        subprocess.call([vs_devenv_abs_path, vs_solution_abs_path, '/build', 'Debug', '/project', 'ALL_BUILD'])
-        subprocess.call([vs_devenv_abs_path, vs_solution_abs_path, '/build', 'Release', '/project', 'ALL_BUILD'])
-        subprocess.call([vs_devenv_abs_path, vs_solution_abs_path, '/build', 'Debug', '/project', 'INSTALL'])
-        subprocess.call([vs_devenv_abs_path, vs_solution_abs_path, '/build', 'Release', '/project', 'INSTALL'])
+        vs_solution_abs_path = os.path.join(build_dir_abs_path, solution_name + ".sln")
+        subprocess.call([vs_devenv_abs_path, vs_solution_abs_path, '/Build', 'Debug', '/Project', 'ALL_BUILD', '/Log'])
+        subprocess.call([vs_devenv_abs_path, vs_solution_abs_path, '/Build', 'Release', '/Project', 'ALL_BUILD', '/Log'])
+        subprocess.call([vs_devenv_abs_path, vs_solution_abs_path, '/Build', 'Debug', '/Project', 'INSTALL', '/Log'])
+        subprocess.call([vs_devenv_abs_path, vs_solution_abs_path, '/Build', 'Release', '/Project', 'INSTALL', '/Log'])
 
     elif platform_name == 'osx':
         platform_dir_abs_path = prepare_platform_directory('osx', project_name)
