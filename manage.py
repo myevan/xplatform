@@ -199,7 +199,7 @@ def build_project(port_dir_abs_path, port_info_dict, command_name, command_optio
         os.system('''xcodebuild -configuration Debug -target install''')
         os.system('''xcodebuild -configuration Release -target install''')
 
-        platform_lib_dir_abs_path = os.path.join(platform_dir_abs_path, 'lib', 'static')
+        platform_lib_dir_abs_path = os.path.join(platform_dir_abs_path, 'lib') # CHECKME: _staic postfix changing , 'static')
         output_dir_rel_path = port_info_dict.get('OUTPUT_DIR', '')
         output_dir_abs_path = os.path.join(build_dir_abs_path, build_dir_rel_path) if output_dir_rel_path else build_dir_abs_path
 

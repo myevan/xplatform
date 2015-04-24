@@ -213,14 +213,15 @@ elseif(WIN32)
         # Creates zlib1.dll when building shared library version
         set_target_properties(zlib PROPERTIES SUFFIX "1.dll")
     else()
-        set_target_properties(zlib zlibstatic PROPERTIES OUTPUT_NAME libz)
+        set_target_properties(zlib PROPERTIES OUTPUT_NAME libz)
+        set_target_properties(zlibstatic PROPERTIES OUTPUT_NAME libz_static)
     endif()
 endif()
 
 if(NOT SKIP_INSTALL_LIBRARIES AND NOT SKIP_INSTALL_ALL )
     install(TARGETS zlib zlibstatic
         RUNTIME DESTINATION "${INSTALL_BIN_DIR}"
-        ARCHIVE DESTINATION "${INSTALL_LIB_DIR}/static"
+        ARCHIVE DESTINATION "${INSTALL_LIB_DIR}"
         LIBRARY DESTINATION "${INSTALL_LIB_DIR}" )
 endif()
 if(NOT SKIP_INSTALL_HEADERS AND NOT SKIP_INSTALL_ALL )
@@ -277,11 +278,17 @@ set(MINIZIP_PUBLIC_HDRS
 
 add_library(minizip ${MINIZIP_SRCS})
 
+if(BUILD_SHARED_LIBS)
+    set_target_properties(minizip PROPERTIES OUTPUT_NAME minizip)
+else()
+    set_target_properties(minizip PROPERTIES OUTPUT_NAME minizip_static)
+endif()
+
 install(FILES ${MINIZIP_PUBLIC_HDRS} DESTINATION include)
 
 install(
     TARGETS minizip
     LIBRARY DESTINATION lib 
-    ARCHIVE DESTINATION lib/static
+    ARCHIVE DESTINATION lib
 )
 

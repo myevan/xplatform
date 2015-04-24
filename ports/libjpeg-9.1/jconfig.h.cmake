@@ -91,7 +91,7 @@
 #undef INCOMPLETE_TYPES_BROKEN
 
 /* from jconfig.vc */
-#ifdef _MSC_VER
+#if _MSC_VER < 1800 // TRUE/FALSE was not found in VC2013
   /* Define "boolean" as unsigned char, not int, per Windows custom */
   #ifndef __RPCNDR_H__          /* don't conflict if rpcndr.h already read */
   typedef unsigned char boolean;

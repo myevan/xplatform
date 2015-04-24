@@ -4,6 +4,9 @@ project (libjpeg C)
 
 set(VERSION "9.1")
 
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/../../cmakes")
+include(xplatform)
+
 # Copyright (C) 2007-2012 LuaDist.
 # Created by Peter Kapec, David Manura
 # Redistribution and use of this file is allowed according to the terms of the MIT license.
@@ -21,7 +24,7 @@ if ( WIN32 AND NOT CYGWIN )
   # jconfig.h
 endif ( )
 
-configure_file ( jconfig.h.cmake jconfig.h )
+configure_file ( jconfig.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/jconfig.h )
 
 include_directories ( ${CMAKE_CURRENT_BINARY_DIR} )
 # jconfig.h
@@ -55,4 +58,4 @@ install_doc ( README install.txt usage.txt wizard.txt example.c libjpeg.txt stru
 install(TARGETS jpeg cjpeg djpeg jpegtran rdjpgcom wrjpgcom
         RUNTIME DESTINATION bin
         LIBRARY DESTINATION lib
-        ARCHIVE DESTINATION lib/static)
+        ARCHIVE DESTINATION lib)
