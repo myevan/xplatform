@@ -41,6 +41,10 @@ set ( SRC jmemnobs.c jaricom.c jcapimin.c jcapistd.c jcarith.c jccoefct.c jccolo
 
 add_library ( jpeg STATIC ${SRC} ${HEADERS} )
 
+if(WIN32)
+    set_target_properties( jpeg PROPERTIES OUTPUT_NAME libjpeg_static )
+endif()
+
 add_executable ( cjpeg cdjpeg.c cjpeg.c rdbmp.c rdgif.c rdppm.c rdrle.c rdtarga.c 
   rdswitch.c )
 add_executable ( djpeg cdjpeg.c djpeg.c wrbmp.c wrgif.c wrppm.c wrrle.c wrtarga.c 
