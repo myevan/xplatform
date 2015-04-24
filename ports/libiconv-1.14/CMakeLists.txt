@@ -6,7 +6,7 @@
 
 cmake_minimum_required(VERSION 2.8)
 
-project (libiconv-1.14)
+project (libiconv)
 
 # to distinguish between debug and release lib
 set(CMAKE_DEBUG_POSTFIX "_d")
@@ -64,6 +64,7 @@ set ( SRC_LIBCHARSET
 
 add_library ( charset STATIC ${SRC_LIBCHARSET} )
 set_target_properties ( charset PROPERTIES COMPILE_FLAGS -DBUILDING_LIBCHARSET)
+set_target_properties( charset PROPERTIES OUTPUT_NAME charset_static )
 
 # libicrt
 set ( SRC_LIBICRT 
@@ -93,6 +94,7 @@ set ( SRC_LIBICONV
 
 add_library ( iconv STATIC ${SRC_LIBICONV} )
 target_link_libraries ( iconv charset )
+set_target_properties( iconv PROPERTIES OUTPUT_NAME iconv_static )
 # FOR_BUILD_SHARED_LIBS set_target_properties ( iconv PROPERTIES COMPILE_FLAGS -DBUILDING_LIBICONV)
 
 install_header ( include/iconv.h )
@@ -101,7 +103,7 @@ install_data ( README AUTHORS COPYING )
 install(TARGETS iconv charset
         RUNTIME DESTINATION bin
         LIBRARY DESTINATION lib
-        ARCHIVE DESTINATION lib/static)
+        ARCHIVE DESTINATION lib)
 
 # for iconvcli
 # add_library ( icrt STATIC ${SRC_LIBICRT} )
