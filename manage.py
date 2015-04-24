@@ -176,6 +176,10 @@ def build_project(port_dir_abs_path, port_info_dict, command_name, command_optio
 
         vs_devenv_abs_path = find_visual_studio_devev()
         vs_solution_abs_path = os.path.join(build_dir_abs_path, solution_name + ".sln")
+        if not os.access(vs_solution_abs_path, os.R_OK):
+            print("NOT_FOUND_VS_SOLUTION:{0}".format(vs_solution_abs_path))
+            return
+
         subprocess.call([vs_devenv_abs_path, vs_solution_abs_path, '/Build', 'Debug', '/Project', 'ALL_BUILD', '/Log'])
         subprocess.call([vs_devenv_abs_path, vs_solution_abs_path, '/Build', 'Release', '/Project', 'ALL_BUILD', '/Log'])
         subprocess.call([vs_devenv_abs_path, vs_solution_abs_path, '/Build', 'Debug', '/Project', 'INSTALL', '/Log'])
