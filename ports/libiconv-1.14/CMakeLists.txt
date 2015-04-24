@@ -64,7 +64,12 @@ set ( SRC_LIBCHARSET
 
 add_library ( charset STATIC ${SRC_LIBCHARSET} )
 set_target_properties ( charset PROPERTIES COMPILE_FLAGS -DBUILDING_LIBCHARSET)
-set_target_properties( charset PROPERTIES OUTPUT_NAME charset_static )
+
+if ( MSVC )
+    set_target_properties( charset PROPERTIES OUTPUT_NAME libcharset_static )
+else ()
+    set_target_properties( charset PROPERTIES OUTPUT_NAME charset_static )
+endif ()
 
 # libicrt
 set ( SRC_LIBICRT 
@@ -94,7 +99,13 @@ set ( SRC_LIBICONV
 
 add_library ( iconv STATIC ${SRC_LIBICONV} )
 target_link_libraries ( iconv charset )
-set_target_properties( iconv PROPERTIES OUTPUT_NAME iconv_static )
+
+if ( MSVC )
+    set_target_properties( iconv PROPERTIES OUTPUT_NAME libiconv_static )
+else ()
+    set_target_properties( iconv PROPERTIES OUTPUT_NAME iconv_static )
+endif ()
+
 # FOR_BUILD_SHARED_LIBS set_target_properties ( iconv PROPERTIES COMPILE_FLAGS -DBUILDING_LIBICONV)
 
 install_header ( include/iconv.h )
