@@ -54,7 +54,9 @@ set(PUBLIC_HEADERS
 include(xplatform)
 
 add_library(lua_static STATIC ${CORE_SOURCES} ${LIB_SOURCES})
-set_target_properties(lua_static PROPERTIES OUTPUT_NAME lua)
+if (MSVC)
+    set_target_properties(lua_static PROPERTIES OUTPUT_NAME liblua_static)
+endif()
 
 install(FILES ${PUBLIC_HEADERS} DESTINATION include)
 
@@ -62,7 +64,7 @@ if (IOS OR ANDROID)
     install(TARGETS lua_static
             RUNTIME DESTINATION bin
             LIBRARY DESTINATION lib
-            ARCHIVE DESTINATION lib/static)
+            ARCHIVE DESTINATION lib)
 else()
     add_library(lua_shared SHARED ${CORE_SOURCES} ${LIB_SOURCES})
     set_target_properties(lua_shared PROPERTIES OUTPUT_NAME lua)
@@ -73,9 +75,10 @@ else()
 
     add_executable (lua_compiler ${COMPILER_SOURCES})
     target_link_libraries(lua_compiler lua_static)
+    set_target_properties(lua_compiler PROPERTIES OUTPUT_NAME luac)
 
     install(TARGETS lua_shared lua_static lua_shell lua_compiler
             RUNTIME DESTINATION bin
             LIBRARY DESTINATION lib
-            ARCHIVE DESTINATION lib/static)
+            ARCHIVE DESTINATION lib)
 endif()
