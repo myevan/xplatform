@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import os
 import glob
+import stat
 import shutil
 import tarfile
 import subprocess
@@ -34,7 +35,20 @@ def extract_file(archive_file_path, target_dir_path):
     for member in tar_file.getmembers():
         # ignore first directory for differnt archive_name and target_directory_name
         member.name = '/'.join(member.name.split('/')[1:])
-        tar_file.extract(member, target_dir_path)
+        try:
+            member_path = os.path.join(target_dir_path, member.name)
+            tar_file.extract(member, target_dir_path)
+        except IOError as e:
+            print 'remove_old_file:', member_path
+            try:
+                os.remove(member_path)
+            except WindowsError as e:
+                os.chmod(member_path, stat.S_IWRITE)
+                os.remove(member_path)
+
+            tar_file.extract(member, target_dir_path)
+        finally:
+            os.chmod(member_path, member.mode)
 
 
 def copy_files(source_dir_path, target_dir_path):
