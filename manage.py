@@ -9,7 +9,7 @@ import subprocess
 from scripts import wget
 from scripts import patch
 from urlparse import urlparse
-
+from distutils.spawn import find_executable
 
 def prepare_directory(path):
     if os.access(path, os.R_OK):
@@ -90,13 +90,16 @@ def find_ndk_abs_path():
 
 def find_cmake_abs_path():
     if os.name == 'nt': 
-        return "c:/Program Files (x86)/CMake/bin/cmake.exe"
+        if os.path.isfile("c:/Program Files (x86)/CMake/bin/cmake.exe"):
+            return "C:/Program Files (x86)/CMake/bin/cmake.exe"
+        else:
+            return "C:/Program Files/CMake/bin/cmake.exe"
     else:
         return "cmake"
 
 
 def find_visual_studio_devev():
-    return "c:/Program Files (x86)/Microsoft Visual Studio 12.0/Common7/IDE/devenv.exe"
+    return "c:/Program Files (x86)/Microsoft Visual Studio 14.0/Common7/IDE/devenv.exe"
 
 
 def prepare_platform_directory(platform_name, project_name):
@@ -179,12 +182,18 @@ def build_project(port_dir_abs_path, port_info_dict, command_name, command_optio
             CMAKE_EXE_ABS_PATH, source_dir_abs_path, platform_dir_abs_path, ' '.join(command_options)))
         os.system('''make install''')
     elif platform_name == 'win':
+        if os.name == 'nt':
+            if not find_executable('MSBuild.exe'):
+                print(r'run "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\vcvars32.bat"')
+                return
+
+
         solution_name = project_name.split('-')[0]
-        platform_dir_abs_path = prepare_platform_directory('win/VS2013', project_name)
+        platform_dir_abs_path = prepare_platform_directory('win/VS2015', project_name)
 
         subprocess.call([
            CMAKE_EXE_ABS_PATH,
-           '-G', 'Visual Studio 12 2013',
+           '-G', 'Visual Studio 14 2015',
            source_dir_abs_path,
            '-DCMAKE_INSTALL_PREFIX={0}'.format(platform_dir_abs_path)] + command_options)
 
